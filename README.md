@@ -2,6 +2,12 @@
 
 MyQuote is a Rails MVC prototype for managing philosopher quotes with public browsing and administrative controls.
 
+## Requirements
+
+- Ruby 3.4.5 (see `.ruby-version`)
+- Rails ~> 8.0.2 (per the `Gemfile`)
+- SQLite 3
+
 ## Setup
 
 1. Install dependencies:

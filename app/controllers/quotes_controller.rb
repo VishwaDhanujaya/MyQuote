@@ -23,7 +23,7 @@ class QuotesController < ApplicationController
     @quote = current_user.quotes.build(quote_params)
 
     if @quote.save
-      redirect_to my_quotes_path, notice: "Quote created successfully."
+      redirect_to quotes_path, notice: "Quote created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class QuotesController < ApplicationController
 
   def update
     if @quote.update(quote_params)
-      redirect_to my_quotes_path, notice: "Quote updated successfully."
+      redirect_to quotes_path, notice: "Quote updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class QuotesController < ApplicationController
 
   def destroy
     @quote.destroy
-    redirect_to my_quotes_path, notice: "Quote deleted successfully."
+    redirect_to quotes_path, notice: "Quote deleted successfully."
   end
 
   private
@@ -54,7 +54,7 @@ class QuotesController < ApplicationController
     return if admin?
     return if @quote.user == current_user
 
-    redirect_to my_quotes_path, alert: "You are not authorized to access this quote."
+    redirect_to quotes_path, alert: "You are not authorized to access this quote."
   end
 
   def load_form_collections
