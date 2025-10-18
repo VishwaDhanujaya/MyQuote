@@ -29,7 +29,7 @@
           <li><%= link_to "Browse Quotes", public_quotes_path %></li>
           <li><%= link_to "Categories", categories_path %></li>
           <% if logged_in? %>
-            <li><%= link_to "My Quotes", my_quotes_path %></li>
+            <li><%= link_to "My Quotes", quotes_path %></li>
           <% end %>
           <% if admin? %>
             <li><%= link_to "Admin", admin_users_path %></li>

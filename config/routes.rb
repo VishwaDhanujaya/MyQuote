@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   delete "/logout", to: "sessions#destroy"
 
   resources :users, only: %i[new create edit update]
-  resources :quotes, path: "my_quotes", as: "my_quotes"
+  resources :quotes
   resources :philosophers
   resources :categories, except: %i[show]
 
