@@ -1,0 +1,14 @@
+<h1><%= [@philosopher.first_name, @philosopher.last_name].compact.join(' ') %></h1>
+
+<p><strong>Birth Year:</strong> <%= @philosopher.birth_year || "Unknown" %></p>
+<p><strong>Death Year:</strong> <%= @philosopher.death_year || "Unknown" %></p>
+
+<% if @philosopher.biography.present? %>
+  <h2>Biography</h2>
+  <p><%= simple_format(@philosopher.biography) %></p>
+<% end %>
+
+<p>
+  <%= link_to "Edit", edit_philosopher_path(@philosopher) %> |
+  <%= link_to "Back", philosophers_path %>
+</p>

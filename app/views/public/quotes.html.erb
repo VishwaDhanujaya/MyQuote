@@ -1,0 +1,47 @@
+<h1>Browse Public Quotes</h1>
+
+<%= form_with url: public_quotes_path, method: :get, local: true do |form| %>
+  <div>
+    <%= form.label :q, "Search text" %>
+    <%= form.text_field :q, value: @query %>
+    <%= form.submit "Search" %>
+  </div>
+<% end %>
+
+<aside>
+  <h2>Categories</h2>
+  <ul>
+    <% @categories.each do |category| %>
+      <li><%= link_to category.name, public_category_path(category) %></li>
+    <% end %>
+  </ul>
+</aside>
+
+<section>
+  <% if @quotes.any? %>
+    <ul>
+      <% @quotes.each do |quote| %>
+        <li>
+          <blockquote>
+            <p><%= quote.text %></p>
+            <footer>
+              Shared by <strong><%= quote.user.first_name %></strong> ·
+              <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
+            </footer>
+          </blockquote>
+          <% if quote.philosopher.biography.present? %>
+            <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
+          <% end %>
+          <% if quote.publication_year.present? %>
+            <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
+          <% end %>
+          <% if quote.user_comment.present? %>
+            <p><strong>Comment:</strong> <%= quote.user_comment %></p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No quotes match your search.</p>
+  <% end %>
+</section>

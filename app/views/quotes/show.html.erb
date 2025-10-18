@@ -1,0 +1,20 @@
+<h1>Quote Detail</h1>
+
+<blockquote>
+  <p><%= @quote.text %></p>
+  <footer>
+    Shared by <strong><%= @quote.user.first_name %></strong> ·
+    <strong><%= [@quote.philosopher.first_name, @quote.philosopher.last_name].compact.join(' ') %></strong>
+  </footer>
+</blockquote>
+
+<p><strong>Visibility:</strong> <%= @quote.is_public? ? "Public" : "Private" %></p>
+<% if @quote.publication_year.present? %>
+  <p><strong>Publication Year:</strong> <%= @quote.publication_year %></p>
+<% end %>
+<% if @quote.user_comment.present? %>
+  <p><strong>Comment:</strong> <%= @quote.user_comment %></p>
+<% end %>
+<p><strong>Categories:</strong> <%= @quote.categories.map(&:name).join(', ') %></p>
+
+<p><%= link_to "Back", my_quotes_path %></p>

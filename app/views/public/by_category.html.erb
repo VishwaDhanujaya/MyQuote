@@ -1,0 +1,29 @@
+<h1>Quotes in <%= @category.name %></h1>
+<p><%= link_to "Back to categories", categories_path %></p>
+
+<% if @quotes.any? %>
+  <ul>
+    <% @quotes.each do |quote| %>
+      <li>
+        <blockquote>
+          <p><%= quote.text %></p>
+          <footer>
+            Shared by <strong><%= quote.user.first_name %></strong> ·
+            <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
+          </footer>
+        </blockquote>
+        <% if quote.philosopher.biography.present? %>
+          <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
+        <% end %>
+        <% if quote.publication_year.present? %>
+          <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
+        <% end %>
+        <% if quote.user_comment.present? %>
+          <p><strong>Comment:</strong> <%= quote.user_comment %></p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No public quotes are available for this category yet.</p>
+<% end %>

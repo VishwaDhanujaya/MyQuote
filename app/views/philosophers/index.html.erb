@@ -1,0 +1,27 @@
+<h1>Philosophers</h1>
+<p><%= link_to "New Philosopher", new_philosopher_path %></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Years</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @philosophers.each do |philosopher| %>
+      <tr>
+        <td><%= [philosopher.first_name, philosopher.last_name].compact.join(' ') %></td>
+        <td><%= [philosopher.birth_year, philosopher.death_year].compact.join(' - ') %></td>
+        <td><%= link_to "View", philosopher_path(philosopher) %></td>
+        <td><%= link_to "Edit", edit_philosopher_path(philosopher) %></td>
+        <td>
+          <%= button_to "Delete", philosopher_path(philosopher), method: :delete, data: { confirm: "Are you sure?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
