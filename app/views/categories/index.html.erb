@@ -1,0 +1,16 @@
+<h1>Categories</h1>
+
+<ul>
+  <% @categories.each do |category| %>
+    <li>
+      <%= link_to category.name, public_category_path(category) %>
+      <% if admin? %>
+        (<%= link_to "Edit", edit_category_path(category) %>)
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<% if admin? %>
+  <p><%= link_to "New Category", new_category_path %></p>
+<% end %>

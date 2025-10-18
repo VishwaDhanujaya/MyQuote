@@ -1,0 +1,33 @@
+<h1>Welcome to MyQuote</h1>
+<p>Explore the latest insights shared by our community.</p>
+
+<% if @quotes.any? %>
+  <ol>
+    <% @quotes.each do |quote| %>
+      <li>
+        <blockquote>
+          <p><%= quote.text %></p>
+          <footer>
+            Shared by <strong><%= quote.user.first_name %></strong> ·
+            <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
+            <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+              (<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' - ') %>)
+            <% end %>
+          </footer>
+        </blockquote>
+        <% if quote.philosopher.biography.present? %>
+          <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
+        <% end %>
+        <% if quote.publication_year.present? %>
+          <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
+        <% end %>
+        <% if quote.user_comment.present? %>
+          <p><strong>Comment:</strong> <%= quote.user_comment %></p>
+        <% end %>
+        <p><strong>Categories:</strong> <%= quote.categories.map(&:name).join(', ') %></p>
+      </li>
+    <% end %>
+  </ol>
+<% else %>
+  <p>No public quotes available yet.</p>
+<% end %>

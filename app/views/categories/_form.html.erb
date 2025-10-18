@@ -1,0 +1,19 @@
+<%= form_with model: @category, local: true do |form| %>
+  <% if @category.errors.any? %>
+    <div class="errors">
+      <h2><%= pluralize(@category.errors.count, "error") %> prevented saving:</h2>
+      <ul>
+        <% @category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true %>
+  </div>
+
+  <%= form.submit %>
+<% end %>

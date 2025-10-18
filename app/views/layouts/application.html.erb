@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Myquote" %></title>
+    <title><%= content_for(:title) || "MyQuote" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -22,6 +22,36 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header>
+      <nav>
+        <ul class="navigation">
+          <li><%= link_to "Home", root_path %></li>
+          <li><%= link_to "Browse Quotes", public_quotes_path %></li>
+          <li><%= link_to "Categories", categories_path %></li>
+          <% if logged_in? %>
+            <li><%= link_to "My Quotes", my_quotes_path %></li>
+          <% end %>
+          <% if admin? %>
+            <li><%= link_to "Admin", admin_users_path %></li>
+          <% end %>
+          <% if logged_in? %>
+            <li>
+              <%= button_to "Logout", logout_path, method: :delete, form: { style: "display:inline" } %>
+            </li>
+          <% else %>
+            <li><%= link_to "Login", login_path %></li>
+            <li><%= link_to "Sign Up", new_user_path %></li>
+          <% end %>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <% flash.each do |key, message| %>
+        <div class="flash <%= key %>"><%= message %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
   </body>
 </html>

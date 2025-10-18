@@ -1,0 +1,45 @@
+<%= form_with model: @quote, url: @quote.persisted? ? my_quote_path(@quote) : my_quotes_path, local: true do |form| %>
+  <% if @quote.errors.any? %>
+    <div class="errors">
+      <h2><%= pluralize(@quote.errors.count, "error") %> prohibited this quote from being saved:</h2>
+      <ul>
+        <% @quote.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :text, "Quote" %>
+    <%= form.text_area :text, required: true, rows: 4 %>
+  </div>
+
+  <div>
+    <%= form.label :publication_year %>
+    <%= form.number_field :publication_year %>
+  </div>
+
+  <div>
+    <%= form.label :user_comment, "Your Comment" %>
+    <%= form.text_area :user_comment, rows: 3 %>
+  </div>
+
+  <div>
+    <%= form.label :is_public, "Make this quote public" %>
+    <%= form.check_box :is_public %>
+  </div>
+
+  <div>
+    <%= form.label :philosopher_id, "Philosopher" %>
+    <%= form.collection_select :philosopher_id, @philosophers, :id, ->(p) { [p.first_name, p.last_name].compact.join(' ') }, prompt: "Select a philosopher", required: true %>
+  </div>
+
+  <div>
+    <%= form.label :category_ids, "Categories" %>
+    <%= form.collection_select :category_ids, @categories, :id, :name, { prompt: false }, { multiple: true, required: true, size: 5 } %>
+    <p>Select at least one category.</p>
+  </div>
+
+  <%= form.submit %>
+<% end %>

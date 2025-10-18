@@ -1,0 +1,39 @@
+<%= form_with model: @philosopher, local: true do |form| %>
+  <% if @philosopher.errors.any? %>
+    <div class="errors">
+      <h2><%= pluralize(@philosopher.errors.count, "error") %> prevented saving:</h2>
+      <ul>
+        <% @philosopher.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :first_name %>
+    <%= form.text_field :first_name, required: true %>
+  </div>
+
+  <div>
+    <%= form.label :last_name %>
+    <%= form.text_field :last_name %>
+  </div>
+
+  <div>
+    <%= form.label :birth_year %>
+    <%= form.number_field :birth_year %>
+  </div>
+
+  <div>
+    <%= form.label :death_year %>
+    <%= form.number_field :death_year %>
+  </div>
+
+  <div>
+    <%= form.label :biography %>
+    <%= form.text_area :biography, rows: 5 %>
+  </div>
+
+  <%= form.submit %>
+<% end %>
