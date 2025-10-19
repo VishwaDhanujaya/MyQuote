@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 ruby ">= 3.0.2", "< 3.4"
 
-gem "rails", "~> 7.0.4"
+gem "rails", "~> 8.0.3"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", "~> 1.4"
 # Use the Puma web server
