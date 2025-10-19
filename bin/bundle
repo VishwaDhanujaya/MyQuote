@@ -10,6 +10,18 @@
 
 require "rubygems"
 
+if (arg = ARGV.first)
+  if (match = arg.match(/\A_(#{Gem::Version::VERSION_PATTERN})_\z/))
+    requested_version = match[1]
+    if ENV["BUNDLER_VERSION"] && ENV["BUNDLER_VERSION"] != requested_version
+      warn "Ignoring requested Bundler version #{requested_version} because BUNDLER_VERSION is set to #{ENV["BUNDLER_VERSION"]}."
+    else
+      ENV["BUNDLER_VERSION"] = requested_version
+      ARGV.shift
+    end
+  end
+end
+
 m = Module.new do
   module_function
 
