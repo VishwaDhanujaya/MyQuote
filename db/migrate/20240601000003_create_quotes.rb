@@ -1,4 +1,4 @@
-class CreateQuotes < ActiveRecord::Migration[8.0]
+class CreateQuotes < ActiveRecord::Migration[7.0]
   def change
     create_table :quotes do |t|
       t.text :text, null: false
