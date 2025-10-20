@@ -1,29 +1,48 @@
-<h1>Quotes in <%= @category.name %></h1>
-<p><%= link_to "Back to categories", categories_path %></p>
+<header class="section__header section__header--with-back">
+  <div>
+    <p class="section__eyebrow">Category</p>
+    <h1 class="section__title"><%= @category.name %></h1>
+    <p class="section__subtitle">A curated collection of reflections on <%= @category.name.downcase %>.</p>
+  </div>
+  <%= link_to "← Back to categories", categories_path, class: "link-back" %>
+</header>
 
-<% if @quotes.any? %>
-  <ul>
-    <% @quotes.each do |quote| %>
-      <li>
-        <blockquote>
-          <p><%= quote.text %></p>
-          <footer>
-            Shared by <strong><%= quote.user.first_name %></strong> ·
-            <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
-          </footer>
-        </blockquote>
-        <% if quote.philosopher.biography.present? %>
-          <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
-        <% end %>
-        <% if quote.publication_year.present? %>
-          <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
-        <% end %>
-        <% if quote.user_comment.present? %>
-          <p><strong>Comment:</strong> <%= quote.user_comment %></p>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>No public quotes are available for this category yet.</p>
-<% end %>
+<section class="section">
+  <% if @quotes.any? %>
+    <ul class="quote-grid">
+      <% @quotes.each do |quote| %>
+        <li class="quote-grid__item">
+          <article class="quote-card quote-card--elevated">
+            <blockquote class="quote-card__blockquote">
+              <p class="quote-card__text">“<%= quote.text %>”</p>
+            </blockquote>
+            <dl class="quote-card__details">
+              <div>
+                <dt class="quote-card__label">Philosopher</dt>
+                <dd class="quote-card__value"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></dd>
+              </div>
+              <div>
+                <dt class="quote-card__label">Shared by</dt>
+                <dd class="quote-card__value"><%= quote.user.first_name %></dd>
+              </div>
+              <% if quote.publication_year.present? %>
+                <div>
+                  <dt class="quote-card__label">Publication year</dt>
+                  <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                </div>
+              <% end %>
+              <% if quote.user_comment.present? %>
+                <div>
+                  <dt class="quote-card__label">Reflection</dt>
+                  <dd class="quote-card__value"><%= quote.user_comment %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </article>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="empty-state">No public quotes are available for this category yet. Check back soon.</p>
+  <% end %>
+</section>
