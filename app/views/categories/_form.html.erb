@@ -1,8 +1,10 @@
-<%= form_with model: @category, local: true do |form| %>
+<% cancel_path = categories_path %>
+
+<%= form_with model: @category, local: true, html: { class: "form-card" } do |form| %>
   <% if @category.errors.any? %>
-    <div class="errors">
-      <h2><%= pluralize(@category.errors.count, "error") %> prevented saving:</h2>
-      <ul>
+    <div class="form-card__errors" role="alert">
+      <h2 class="form-card__errors-title"><%= pluralize(@category.errors.count, "error") %> prevented saving this category</h2>
+      <ul class="form-card__error-list">
         <% @category.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -10,10 +12,14 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name, required: true %>
+  <div class="form-field">
+    <%= form.label :name, "Category name", class: "form-field__label" %>
+    <%= form.text_field :name, required: true, class: "form-field__control" %>
+    <p class="form-field__hint">Pick a clear, memorable name so contributors can tag their quotes confidently.</p>
   </div>
 
-  <%= form.submit %>
+  <div class="form-card__actions">
+    <%= link_to "Cancel", cancel_path, class: "button button--subtle" %>
+    <%= form.submit(@category.persisted? ? "Save category" : "Create category", class: "button") %>
+  </div>
 <% end %>

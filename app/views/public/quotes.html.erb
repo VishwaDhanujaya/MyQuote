@@ -3,10 +3,10 @@
   <p class="section__subtitle">Search by theme or explore curated categories to find the perfect words for every moment.</p>
 </header>
 
-<div class="layout layout--with-sidebar">
-  <aside class="sidebar">
-    <div class="sidebar__card">
-      <h2 class="sidebar__title">Search</h2>
+<section class="discover">
+  <div class="discover__controls">
+    <div class="surface-card discover__panel">
+      <h2 class="surface-card__title">Search quotes</h2>
       <%= form_with url: public_quotes_path, method: :get, local: true, class: "search" do |form| %>
         <%= form.label :q, "Search by keyword", class: "search__label" %>
         <div class="search__control">
@@ -28,20 +28,35 @@
       <% end %>
     </div>
 
-    <div class="sidebar__card">
-      <h2 class="sidebar__title">Categories</h2>
+    <div class="surface-card discover__panel discover__categories">
+      <div>
+        <h2 class="surface-card__title">Browse by category</h2>
+        <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
+      </div>
       <div class="category-card-grid" role="list">
         <% @categories.each do |category| %>
-          <%= link_to public_category_path(category), class: "category-card", role: "listitem" do %>
-            <span class="category-card__name"><%= category.name %></span>
-            <span class="category-card__action" aria-hidden="true">Explore</span>
-          <% end %>
+          <div class="category-card-wrapper" role="listitem">
+            <%= link_to public_category_path(category), class: "category-card" do %>
+              <span class="category-card__name"><%= category.name %></span>
+              <span class="category-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" role="presentation" focusable="false">
+                  <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
+                </svg>
+              </span>
+              <span class="sr-only">View <%= category.name %> quotes</span>
+            <% end %>
+            <% if admin? %>
+              <div class="category-card__admin">
+                <%= link_to "Edit", edit_category_path(category), class: "button button--minimal" %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
-  </aside>
+  </div>
 
-  <section class="section layout__content">
+  <div class="discover__results" aria-live="polite">
     <% if @quotes.any? %>
       <ul class="quote-grid">
         <% @quotes.each do |quote| %>
@@ -108,5 +123,5 @@
     <% else %>
       <p class="empty-state">No quotes match your search. Try a different keyword or browse a category.</p>
     <% end %>
-  </section>
-</div>
+  </div>
+</section>

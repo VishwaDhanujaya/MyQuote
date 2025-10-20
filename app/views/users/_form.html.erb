@@ -1,8 +1,10 @@
-<%= form_with model: @user, local: true do |form| %>
+<% cancel_path = @user.persisted? ? quotes_path : root_path %>
+
+<%= form_with model: @user, local: true, html: { class: "form-card" } do |form| %>
   <% if @user.errors.any? %>
-    <div class="errors">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this account from being saved:</h2>
-      <ul>
+    <div class="form-card__errors" role="alert">
+      <h2 class="form-card__errors-title"><%= pluralize(@user.errors.count, "error") %> prevented saving this account</h2>
+      <ul class="form-card__error-list">
         <% @user.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -10,30 +12,34 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name, required: true %>
+  <div class="form-field">
+    <%= form.label :first_name, "First name", class: "form-field__label" %>
+    <%= form.text_field :first_name, required: true, class: "form-field__control" %>
   </div>
 
-  <div>
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name, required: true %>
+  <div class="form-field">
+    <%= form.label :last_name, "Last name", class: "form-field__label" %>
+    <%= form.text_field :last_name, required: true, class: "form-field__control" %>
   </div>
 
-  <div>
-    <%= form.label :email %>
-    <%= form.email_field :email, required: true %>
+  <div class="form-field">
+    <%= form.label :email, class: "form-field__label" %>
+    <%= form.email_field :email, required: true, class: "form-field__control" %>
   </div>
 
-  <div>
-    <%= form.label :password %>
-    <%= form.password_field :password, autocomplete: "new-password" %>
+  <div class="form-field">
+    <%= form.label :password, class: "form-field__label" %>
+    <%= form.password_field :password, autocomplete: "new-password", class: "form-field__control" %>
+    <p class="form-field__hint"><%= @user.persisted? ? "Leave blank to keep your current password." : "Create a password with at least six characters." %></p>
   </div>
 
-  <div>
-    <%= form.label :password_confirmation %>
-    <%= form.password_field :password_confirmation, autocomplete: "new-password" %>
+  <div class="form-field">
+    <%= form.label :password_confirmation, "Confirm password", class: "form-field__label" %>
+    <%= form.password_field :password_confirmation, autocomplete: "new-password", class: "form-field__control" %>
   </div>
 
-  <%= form.submit %>
+  <div class="form-card__actions">
+    <%= link_to "Cancel", cancel_path, class: "button button--subtle" %>
+    <%= form.submit(@user.persisted? ? "Save profile" : "Create account", class: "button") %>
+  </div>
 <% end %>

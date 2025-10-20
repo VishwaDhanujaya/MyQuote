@@ -1,4 +1,10 @@
-<h1>Create Account</h1>
-<p>Already have an account? <%= link_to "Log in", login_path %>.</p>
+<section class="section section--narrow">
+  <header class="section__header">
+    <h1 class="section__title">Create your account</h1>
+    <p class="section__subtitle">Join the MyQuote community to save favourites, share discoveries, and follow your favourite thinkers.</p>
+  </header>
 
-<%= render "form" %>
+  <%= render "form" %>
+
+  <p class="section__footer">Already have an account? <%= link_to "Log in", login_path %>.</p>
+</section>

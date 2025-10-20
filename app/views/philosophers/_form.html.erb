@@ -1,8 +1,10 @@
-<%= form_with model: @philosopher, local: true do |form| %>
+<% cancel_path = @philosopher.persisted? ? philosopher_path(@philosopher) : philosophers_path %>
+
+<%= form_with model: @philosopher, local: true, html: { class: "form-card" } do |form| %>
   <% if @philosopher.errors.any? %>
-    <div class="errors">
-      <h2><%= pluralize(@philosopher.errors.count, "error") %> prevented saving:</h2>
-      <ul>
+    <div class="form-card__errors" role="alert">
+      <h2 class="form-card__errors-title"><%= pluralize(@philosopher.errors.count, "error") %> prevented saving this philosopher</h2>
+      <ul class="form-card__error-list">
         <% @philosopher.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -10,30 +12,33 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name, required: true %>
+  <div class="form-field">
+    <%= form.label :first_name, "First name", class: "form-field__label" %>
+    <%= form.text_field :first_name, required: true, class: "form-field__control" %>
   </div>
 
-  <div>
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name %>
+  <div class="form-field">
+    <%= form.label :last_name, "Last name", class: "form-field__label" %>
+    <%= form.text_field :last_name, class: "form-field__control" %>
   </div>
 
-  <div>
-    <%= form.label :birth_year %>
-    <%= form.number_field :birth_year %>
+  <div class="form-field">
+    <%= form.label :birth_year, "Birth year", class: "form-field__label" %>
+    <%= form.number_field :birth_year, class: "form-field__control", placeholder: "e.g. 384" %>
   </div>
 
-  <div>
-    <%= form.label :death_year %>
-    <%= form.number_field :death_year %>
+  <div class="form-field">
+    <%= form.label :death_year, "Death year", class: "form-field__label" %>
+    <%= form.number_field :death_year, class: "form-field__control", placeholder: "e.g. 322" %>
   </div>
 
-  <div>
-    <%= form.label :biography %>
-    <%= form.text_area :biography, rows: 5 %>
+  <div class="form-field">
+    <%= form.label :biography, class: "form-field__label" %>
+    <%= form.text_area :biography, rows: 5, class: "form-field__control", placeholder: "Briefly describe their life and impact." %>
   </div>
 
-  <%= form.submit %>
+  <div class="form-card__actions">
+    <%= link_to "Cancel", cancel_path, class: "button button--subtle" %>
+    <%= form.submit(@philosopher.persisted? ? "Save philosopher" : "Create philosopher", class: "button") %>
+  </div>
 <% end %>
