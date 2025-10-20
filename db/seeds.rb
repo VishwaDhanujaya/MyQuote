@@ -31,6 +31,9 @@ marcus = Philosopher.create!(first_name: "Marcus", last_name: "Aurelius", birth_
 ethics = Category.create!(name: "Ethics")
 logic = Category.create!(name: "Logic")
 stoicism = Category.create!(name: "Stoicism")
+wisdom = Category.create!(name: "Wisdom")
+mindfulness = Category.create!(name: "Mindfulness")
+leadership = Category.create!(name: "Leadership")
 
 Quote.create!(
   text: "The unexamined life is not worth living.",
@@ -60,6 +63,56 @@ Quote.create!(
   user: standard,
   philosopher: marcus,
   categories: [stoicism, ethics]
+)
+
+seneca = Philosopher.create!(first_name: "Seneca", last_name: "the Younger", birth_year: -4, death_year: 65, biography: "Roman Stoic philosopher, statesman, and dramatist.")
+confucius = Philosopher.create!(first_name: "Confucius", birth_year: -551, death_year: -479, biography: "Chinese philosopher and politician of the Spring and Autumn period.")
+epictetus = Philosopher.create!(first_name: "Epictetus", birth_year: 55, death_year: 135, biography: "Greek Stoic philosopher known for his discourses on resilience.")
+laozi = Philosopher.create!(first_name: "Lao", last_name: "Tzu", birth_year: -601, death_year: -531, biography: "Ancient Chinese philosopher and writer, the reputed author of the Tao Te Ching.")
+simone = Philosopher.create!(first_name: "Simone", last_name: "de Beauvoir", birth_year: 1908, death_year: 1986, biography: "French existentialist philosopher, feminist, and social theorist.")
+
+Quote.create!(
+  text: "Luck is what happens when preparation meets opportunity.",
+  publication_year: 55,
+  is_public: true,
+  user: admin,
+  philosopher: seneca,
+  categories: [stoicism, leadership]
+)
+
+Quote.create!(
+  text: "He who conquers himself is the mightiest warrior.",
+  is_public: true,
+  user: admin,
+  philosopher: confucius,
+  categories: [wisdom, ethics]
+)
+
+Quote.create!(
+  text: "Don't explain your philosophy. Embody it.",
+  is_public: false,
+  user_comment: "Quiet accountability reminder.",
+  user: standard,
+  philosopher: epictetus,
+  categories: [stoicism]
+)
+
+Quote.create!(
+  text: "When I let go of what I am, I become what I might be.",
+  is_public: true,
+  user: standard,
+  philosopher: laozi,
+  categories: [mindfulness, wisdom]
+)
+
+Quote.create!(
+  text: "Change your life today. Don't gamble on the future, act now, without delay.",
+  publication_year: 1963,
+  is_public: true,
+  user_comment: "Motivates me to take immediate action.",
+  user: admin,
+  philosopher: simone,
+  categories: [leadership, wisdom]
 )
 
 puts "Seeded admin: #{admin.email} / admin123"

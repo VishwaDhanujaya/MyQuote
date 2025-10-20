@@ -1,20 +1,42 @@
-<h1>Quote Detail</h1>
+<section class="quote-detail">
+  <article class="quote-detail__card">
+    <p class="quote-detail__text">“<%= @quote.text %>”</p>
 
-<blockquote>
-  <p><%= @quote.text %></p>
-  <footer>
-    Shared by <strong><%= @quote.user.first_name %></strong> ·
-    <strong><%= [@quote.philosopher.first_name, @quote.philosopher.last_name].compact.join(' ') %></strong>
-  </footer>
-</blockquote>
+    <div class="quote-detail__footer">
+      <span>Shared by <strong><%= @quote.user.first_name %></strong></span>
+      <span>From <strong><%= [@quote.philosopher.first_name, @quote.philosopher.last_name].compact.join(' ') %></strong></span>
+    </div>
+  </article>
 
-<p><strong>Visibility:</strong> <%= @quote.is_public? ? "Public" : "Private" %></p>
-<% if @quote.publication_year.present? %>
-  <p><strong>Publication Year:</strong> <%= @quote.publication_year %></p>
-<% end %>
-<% if @quote.user_comment.present? %>
-  <p><strong>Comment:</strong> <%= @quote.user_comment %></p>
-<% end %>
-<p><strong>Categories:</strong> <%= @quote.categories.map(&:name).join(', ') %></p>
-
-<p><%= link_to "Back", quotes_path %></p>
+  <div class="quote-detail__meta">
+    <div class="info-grid">
+      <div>
+        <strong>Visibility</strong>
+        <div><%= @quote.is_public? ? "Public" : "Private" %></div>
+      </div>
+      <% if @quote.publication_year.present? %>
+        <div>
+          <strong>Publication Year</strong>
+          <div><%= @quote.publication_year %></div>
+        </div>
+      <% end %>
+      <% if @quote.user_comment.present? %>
+        <div>
+          <strong>Comment</strong>
+          <div><%= @quote.user_comment %></div>
+        </div>
+      <% end %>
+      <% if @quote.categories.any? %>
+        <div>
+          <strong>Categories</strong>
+          <div class="quote-card__chips">
+            <% @quote.categories.each do |category| %>
+              <span class="chip"><%= category.name %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <%= link_to "Back to quotes", quotes_path, class: "back-link" %>
+  </div>
+</section>
