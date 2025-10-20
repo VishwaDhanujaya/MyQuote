@@ -4,57 +4,55 @@
 </header>
 
 <section class="discover">
-  <div class="discover__controls">
-    <div class="surface-card discover__panel">
-      <h2 class="surface-card__title">Search quotes</h2>
-      <%= form_with url: public_quotes_path, method: :get, local: true, class: "search" do |form| %>
-        <%= form.label :q, "Search by keyword", class: "search__label" %>
-        <div class="search__control">
-          <span class="search__icon" aria-hidden="true">
+  <div class="discover__search" role="search">
+    <%= form_with url: public_quotes_path, method: :get, local: true, class: "search search--standalone" do |form| %>
+      <%= form.label :q, "Search by keyword", class: "search__label" %>
+      <div class="search__control">
+        <span class="search__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+            <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+          </svg>
+        </span>
+        <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
+        <button type="submit" class="search__button">
+          <span class="search__button-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" role="presentation" focusable="false">
               <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
             </svg>
           </span>
-          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
-          <button type="submit" class="search__button">
-            <span class="search__button-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-                <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+          <span class="search__button-label">Search</span>
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <section class="discover__categories" aria-labelledby="discover-categories-heading">
+    <div class="discover__categories-header">
+      <h2 id="discover-categories-heading" class="discover__categories-title">Browse by category</h2>
+      <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
+    </div>
+    <div class="category-card-grid" role="list">
+      <% @categories.each do |category| %>
+        <article class="category-card" role="listitem">
+          <%= link_to public_category_path(category), class: "category-card__link" do %>
+            <span class="category-card__name"><%= category.name %></span>
+            <span class="category-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" role="presentation" focusable="false">
+                <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
               </svg>
             </span>
-            <span class="search__button-label">Search</span>
-          </button>
-        </div>
+            <span class="sr-only">View <%= category.name %> quotes</span>
+          <% end %>
+          <% if admin? %>
+            <div class="category-card__actions" aria-label="Manage category">
+              <%= link_to "Edit", edit_category_path(category), class: "chip-button" %>
+              <%= button_to "Remove", category_path(category), method: :delete, data: { confirm: "Remove this category?" }, class: "chip-button chip-button--danger" %>
+            </div>
+          <% end %>
+        </article>
       <% end %>
     </div>
-
-    <div class="surface-card discover__panel discover__categories">
-      <div>
-        <h2 class="surface-card__title">Browse by category</h2>
-        <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
-      </div>
-      <div class="category-card-grid" role="list">
-        <% @categories.each do |category| %>
-          <div class="category-card-wrapper" role="listitem">
-            <%= link_to public_category_path(category), class: "category-card" do %>
-              <span class="category-card__name"><%= category.name %></span>
-              <span class="category-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" role="presentation" focusable="false">
-                  <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
-                </svg>
-              </span>
-              <span class="sr-only">View <%= category.name %> quotes</span>
-            <% end %>
-            <% if admin? %>
-              <div class="category-card__admin">
-                <%= link_to "Edit", edit_category_path(category), class: "button button--minimal" %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <div class="discover__results" aria-live="polite">
     <% if @quotes.any? %>

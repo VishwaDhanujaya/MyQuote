@@ -12,6 +12,9 @@
   <section class="quotes-grid" aria-live="polite">
     <% @quotes.each do |quote| %>
       <article class="quote-card">
+        <%= link_to quote_path(quote), class: "quote-card__link" do %>
+          <span class="sr-only">View quote details</span>
+        <% end %>
         <p class="quote-card__text">“<%= truncate(quote.text, length: 180) %>”</p>
 
         <div class="quote-card__meta">
@@ -45,9 +48,8 @@
         </div>
 
         <div class="quote-card__actions">
-          <%= link_to "View", quote_path(quote), class: "button button--subtle" %>
-          <%= link_to "Edit", edit_quote_path(quote), class: "button button--ghost" %>
-          <%= button_to "Delete", quote_path(quote), method: :delete, data: { confirm: "Are you sure?" }, class: "button button--minimal" %>
+          <%= link_to "Edit", edit_quote_path(quote), class: "button button--ghost button--sm" %>
+          <%= button_to "Delete", quote_path(quote), method: :delete, data: { confirm: "Are you sure?" }, class: "button button--danger button--sm" %>
         </div>
       </article>
     <% end %>

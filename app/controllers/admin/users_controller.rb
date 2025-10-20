@@ -6,7 +6,7 @@ module Admin
     before_action :set_user, only: %i[edit update destroy promote demote set_status]
 
     def index
-      @users = User.order(:first_name, :last_name)
+      @users = User.where.not(id: current_user.id).order(:first_name, :last_name)
     end
 
     def edit; end
@@ -29,17 +29,23 @@ module Admin
     end
 
     def promote
+      return redirect_to admin_users_path, alert: "You cannot change your own role." if @user == current_user
+
       @user.admin!
       redirect_to admin_users_path, notice: "User promoted to admin."
     end
 
     def demote
+      return redirect_to admin_users_path, alert: "You cannot change your own role." if @user == current_user
+
       @user.standard!
       redirect_to admin_users_path, notice: "User demoted to standard."
     end
 
     def set_status
       status = params[:status]
+      return redirect_to admin_users_path, alert: "You cannot change your own status." if @user == current_user
+
       if User.statuses.key?(status)
         @user.update(status: status)
         redirect_to admin_users_path, notice: "User status updated."
