@@ -1,47 +1,74 @@
-<h1>Browse Public Quotes</h1>
+<header class="section__header">
+  <h1 class="section__title">Discover public quotes</h1>
+  <p class="section__subtitle">Search by theme or explore curated categories to find the perfect words for every moment.</p>
+</header>
 
-<%= form_with url: public_quotes_path, method: :get, local: true do |form| %>
-  <div>
-    <%= form.label :q, "Search text" %>
-    <%= form.text_field :q, value: @query %>
-    <%= form.submit "Search" %>
-  </div>
-<% end %>
-
-<aside>
-  <h2>Categories</h2>
-  <ul>
-    <% @categories.each do |category| %>
-      <li><%= link_to category.name, public_category_path(category) %></li>
-    <% end %>
-  </ul>
-</aside>
-
-<section>
-  <% if @quotes.any? %>
-    <ul>
-      <% @quotes.each do |quote| %>
-        <li>
-          <blockquote>
-            <p><%= quote.text %></p>
-            <footer>
-              Shared by <strong><%= quote.user.first_name %></strong> ·
-              <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
-            </footer>
-          </blockquote>
-          <% if quote.philosopher.biography.present? %>
-            <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
-          <% end %>
-          <% if quote.publication_year.present? %>
-            <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
-          <% end %>
-          <% if quote.user_comment.present? %>
-            <p><strong>Comment:</strong> <%= quote.user_comment %></p>
-          <% end %>
-        </li>
+<div class="layout layout--with-sidebar">
+  <aside class="sidebar">
+    <div class="sidebar__card">
+      <h2 class="sidebar__title">Search</h2>
+      <%= form_with url: public_quotes_path, method: :get, local: true, class: "search" do |form| %>
+        <div class="search__field">
+          <%= form.label :q, "Search by keyword", class: "search__label" %>
+          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "e.g. courage, love" %>
+        </div>
+        <%= form.submit "Search", class: "button button--primary search__submit" %>
       <% end %>
-    </ul>
-  <% else %>
-    <p>No quotes match your search.</p>
-  <% end %>
-</section>
+    </div>
+
+    <div class="sidebar__card">
+      <h2 class="sidebar__title">Categories</h2>
+      <ul class="category-list">
+        <% @categories.each do |category| %>
+          <li class="category-list__item"><%= link_to category.name, public_category_path(category), class: "category-list__link" %></li>
+        <% end %>
+      </ul>
+    </div>
+  </aside>
+
+  <section class="section layout__content">
+    <% if @quotes.any? %>
+      <ul class="quote-grid">
+        <% @quotes.each do |quote| %>
+          <li class="quote-grid__item">
+            <article class="quote-card quote-card--elevated">
+              <blockquote class="quote-card__blockquote">
+                <p class="quote-card__text">“<%= quote.text %>”</p>
+              </blockquote>
+              <dl class="quote-card__details">
+                <div>
+                  <dt class="quote-card__label">Philosopher</dt>
+                  <dd class="quote-card__value"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></dd>
+                </div>
+                <div>
+                  <dt class="quote-card__label">Shared by</dt>
+                  <dd class="quote-card__value"><%= quote.user.first_name %></dd>
+                </div>
+                <% if quote.philosopher.biography.present? %>
+                  <div>
+                    <dt class="quote-card__label">About the philosopher</dt>
+                    <dd class="quote-card__value"><%= quote.philosopher.biography %></dd>
+                  </div>
+                <% end %>
+                <% if quote.publication_year.present? %>
+                  <div>
+                    <dt class="quote-card__label">Publication year</dt>
+                    <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                  </div>
+                <% end %>
+                <% if quote.user_comment.present? %>
+                  <div>
+                    <dt class="quote-card__label">Reflection</dt>
+                    <dd class="quote-card__value"><%= quote.user_comment %></dd>
+                  </div>
+                <% end %>
+              </dl>
+            </article>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="empty-state">No quotes match your search. Try a different keyword or browse a category.</p>
+    <% end %>
+  </section>
+</div>

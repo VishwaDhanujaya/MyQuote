@@ -1,33 +1,88 @@
-<h1>Welcome to MyQuote</h1>
-<p>Explore the latest insights shared by our community.</p>
-
-<% if @quotes.any? %>
-  <ol>
-    <% @quotes.each do |quote| %>
-      <li>
-        <blockquote>
-          <p><%= quote.text %></p>
-          <footer>
-            Shared by <strong><%= quote.user.first_name %></strong> ·
-            <strong><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></strong>
-            <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
-              (<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' - ') %>)
-            <% end %>
-          </footer>
-        </blockquote>
-        <% if quote.philosopher.biography.present? %>
-          <p><strong>About the philosopher:</strong> <%= quote.philosopher.biography %></p>
-        <% end %>
-        <% if quote.publication_year.present? %>
-          <p><strong>Publication Year:</strong> <%= quote.publication_year %></p>
-        <% end %>
-        <% if quote.user_comment.present? %>
-          <p><strong>Comment:</strong> <%= quote.user_comment %></p>
-        <% end %>
-        <p><strong>Categories:</strong> <%= quote.categories.map(&:name).join(', ') %></p>
-      </li>
+<section class="hero">
+  <div class="hero__content">
+    <p class="hero__eyebrow">MyQuote</p>
+    <h1 class="hero__title">Where timeless wisdom meets modern elegance.</h1>
+    <p class="hero__subtitle">Discover quotes curated by our community, save your favourites, and explore the minds of legendary philosophers with a refined reading experience.</p>
+    <div class="hero__actions">
+      <%= link_to "Browse Quotes", public_quotes_path, class: "button button--primary" %>
+      <%= link_to "Share Your Insight", new_quote_path, class: "button button--ghost" if logged_in? %>
+      <% unless logged_in? %>
+        <%= link_to "Create an account", new_user_path, class: "button button--ghost" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="hero__card">
+    <p class="hero__card-label">Featured Thought</p>
+    <% if @quotes.first %>
+      <blockquote class="quote-card">
+        <p class="quote-card__text">“<%= @quotes.first.text %>”</p>
+        <div class="quote-card__meta">
+          <span class="quote-card__author"><%= [@quotes.first.philosopher.first_name, @quotes.first.philosopher.last_name].compact.join(' ') %></span>
+          <span class="quote-card__contributor">Shared by <%= @quotes.first.user.first_name %></span>
+        </div>
+      </blockquote>
+    <% else %>
+      <p class="hero__card-empty">No public quotes yet—be the first to contribute.</p>
     <% end %>
-  </ol>
-<% else %>
-  <p>No public quotes available yet.</p>
-<% end %>
+  </div>
+</section>
+
+<section class="section">
+  <header class="section__header">
+    <h2 class="section__title">Recently added</h2>
+    <p class="section__subtitle">Fresh perspectives from our community, updated in real-time.</p>
+  </header>
+
+  <% if @quotes.any? %>
+    <ol class="quote-grid">
+      <% @quotes.each do |quote| %>
+        <li class="quote-grid__item">
+          <article class="quote-card quote-card--elevated">
+            <blockquote class="quote-card__blockquote">
+              <p class="quote-card__text">“<%= quote.text %>”</p>
+            </blockquote>
+            <dl class="quote-card__details">
+              <div>
+                <dt class="quote-card__label">Philosopher</dt>
+                <dd class="quote-card__value">
+                  <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                  <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                    <span class="quote-card__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                  <% end %>
+                </dd>
+              </div>
+              <div>
+                <dt class="quote-card__label">Shared by</dt>
+                <dd class="quote-card__value"><%= quote.user.first_name %></dd>
+              </div>
+              <% if quote.publication_year.present? %>
+                <div>
+                  <dt class="quote-card__label">Publication</dt>
+                  <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                </div>
+              <% end %>
+              <% if quote.user_comment.present? %>
+                <div>
+                  <dt class="quote-card__label">Reflection</dt>
+                  <dd class="quote-card__value"><%= quote.user_comment %></dd>
+                </div>
+              <% end %>
+              <% if quote.categories.any? %>
+                <div>
+                  <dt class="quote-card__label">Categories</dt>
+                  <dd class="quote-card__value quote-card__tags">
+                    <% quote.categories.each do |category| %>
+                      <span class="tag"><%= category.name %></span>
+                    <% end %>
+                  </dd>
+                </div>
+              <% end %>
+            </dl>
+          </article>
+        </li>
+      <% end %>
+    </ol>
+  <% else %>
+    <p class="empty-state">No public quotes available yet. <%= link_to "Share one", new_quote_path if logged_in? %></p>
+  <% end %>
+</section>

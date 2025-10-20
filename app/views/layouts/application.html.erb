@@ -18,40 +18,52 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
-  <body>
-    <header>
-      <nav>
-        <ul class="navigation">
-          <li><%= link_to "Home", root_path %></li>
-          <li><%= link_to "Browse Quotes", public_quotes_path %></li>
-          <li><%= link_to "Categories", categories_path %></li>
+  <body class="app-body">
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div class="app-brand">
+          <%= link_to "MyQuote", root_path, class: "app-brand__link" %>
+          <span class="app-brand__tagline">Curated wisdom, beautifully presented</span>
+        </div>
+        <nav class="app-nav" aria-label="Primary">
+          <ul class="app-nav__list">
+            <li class="app-nav__item"><%= link_to "Home", root_path, class: "app-nav__link" %></li>
+            <li class="app-nav__item"><%= link_to "Discover", public_quotes_path, class: "app-nav__link" %></li>
+            <li class="app-nav__item"><%= link_to "Categories", categories_path, class: "app-nav__link" %></li>
+            <% if logged_in? %>
+              <li class="app-nav__item"><%= link_to "My Quotes", quotes_path, class: "app-nav__link" %></li>
+            <% end %>
+            <% if admin? %>
+              <li class="app-nav__item"><%= link_to "Admin", admin_users_path, class: "app-nav__link" %></li>
+            <% end %>
+          </ul>
+        </nav>
+        <div class="app-header__actions">
           <% if logged_in? %>
-            <li><%= link_to "My Quotes", quotes_path %></li>
-          <% end %>
-          <% if admin? %>
-            <li><%= link_to "Admin", admin_users_path %></li>
-          <% end %>
-          <% if logged_in? %>
-            <li>
-              <%= button_to "Logout", logout_path, method: :delete, form: { style: "display:inline" } %>
-            </li>
+            <%= link_to "Logout", logout_path, method: :delete, data: { turbo_confirm: "Are you sure you want to log out?" }, class: "button button--ghost" %>
           <% else %>
-            <li><%= link_to "Login", login_path %></li>
-            <li><%= link_to "Sign Up", new_user_path %></li>
+            <%= link_to "Login", login_path, class: "button button--ghost" %>
+            <%= link_to "Sign Up", new_user_path, class: "button" %>
           <% end %>
-        </ul>
-      </nav>
+        </div>
+      </div>
     </header>
 
-    <main class="container">
+    <main class="app-main">
       <% flash.each do |key, message| %>
-        <div class="flash <%= key %>"><%= message %></div>
+        <div class="flash flash--<%= key %>"><%= message %></div>
       <% end %>
 
       <%= yield %>
     </main>
+    <footer class="app-footer">
+      <p>&copy; <%= Time.zone.now.year %> MyQuote. Designed for reflection.</p>
+    </footer>
   </body>
 </html>
