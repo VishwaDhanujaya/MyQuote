@@ -48,9 +48,10 @@ Use a Ruby version manager such as `mise`, `rbenv`, or `asdf` to install Ruby 3.
 
 - Email/password authentication with account status enforcement (active, suspended, banned).
 - Role-based access with standard users managing only their quotes and admins managing users.
-- Public homepage and search limited to public quotes, including category browsing.
+- Discover page with a top-level keyword search and a left-aligned category sidebar that uses compact filter cards and removable chips to stack multiple filters.
 - Quotes belong to a philosopher and at least one category, with optional publication year and personal comment.
 - Admin tools to promote/demote users, set status, and delete accounts.
+- Opinionated dark theme spanning navigation, tables, and modals for comfortable nighttime browsing.
 
 ## Known Limitations
 
