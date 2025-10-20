@@ -8,18 +8,8 @@
     <%= form_with url: public_quotes_path, method: :get, local: true, class: "search search--standalone" do |form| %>
       <%= form.label :q, "Search by keyword", class: "search__label" %>
       <div class="search__control">
-        <span class="search__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-            <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
-          </svg>
-        </span>
         <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
         <button type="submit" class="search__button">
-          <span class="search__button-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
-              <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
-            </svg>
-          </span>
           <span class="search__button-label">Search</span>
         </button>
       </div>
