@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 
-ruby ">= 3.0.2", "< 3.4"
+ruby "3.2.2"
 
 gem "rails", "~> 7.0.4"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
+gem "sqlite3", "~> 1.6", ">= 1.6.9"
 # Use the Puma web server
 gem "puma", "~> 5.0"
 # Use JavaScript with ESM import maps
