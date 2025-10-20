@@ -8,21 +8,36 @@
     <div class="sidebar__card">
       <h2 class="sidebar__title">Search</h2>
       <%= form_with url: public_quotes_path, method: :get, local: true, class: "search" do |form| %>
-        <div class="search__field">
-          <%= form.label :q, "Search by keyword", class: "search__label" %>
-          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "e.g. courage, love" %>
+        <%= form.label :q, "Search by keyword", class: "search__label" %>
+        <div class="search__control">
+          <span class="search__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+            </svg>
+          </span>
+          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
+          <button type="submit" class="search__button">
+            <span class="search__button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="search__button-label">Search</span>
+          </button>
         </div>
-        <%= form.submit "Search", class: "button button--primary search__submit" %>
       <% end %>
     </div>
 
     <div class="sidebar__card">
       <h2 class="sidebar__title">Categories</h2>
-      <ul class="category-list">
+      <div class="category-card-grid" role="list">
         <% @categories.each do |category| %>
-          <li class="category-list__item"><%= link_to category.name, public_category_path(category), class: "category-list__link" %></li>
+          <%= link_to public_category_path(category), class: "category-card", role: "listitem" do %>
+            <span class="category-card__name"><%= category.name %></span>
+            <span class="category-card__action" aria-hidden="true">Explore</span>
+          <% end %>
         <% end %>
-      </ul>
+      </div>
     </div>
   </aside>
 
@@ -31,38 +46,61 @@
       <ul class="quote-grid">
         <% @quotes.each do |quote| %>
           <li class="quote-grid__item">
-            <article class="quote-card quote-card--elevated">
+            <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
               <blockquote class="quote-card__blockquote">
                 <p class="quote-card__text">“<%= quote.text %>”</p>
               </blockquote>
-              <dl class="quote-card__details">
-                <div>
-                  <dt class="quote-card__label">Philosopher</dt>
-                  <dd class="quote-card__value"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></dd>
-                </div>
-                <div>
-                  <dt class="quote-card__label">Shared by</dt>
-                  <dd class="quote-card__value"><%= quote.user.first_name %></dd>
-                </div>
-                <% if quote.philosopher.biography.present? %>
+              <footer class="quote-card__meta">
+                <p class="quote-card__meta-line">
+                  <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+                  <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
+                </p>
+              </footer>
+              <div class="quote-card__modal-content" data-quote-modal-content hidden>
+                <dl class="quote-modal__details">
                   <div>
-                    <dt class="quote-card__label">About the philosopher</dt>
-                    <dd class="quote-card__value"><%= quote.philosopher.biography %></dd>
+                    <dt>Philosopher</dt>
+                    <dd>
+                      <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                      <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                        <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                      <% end %>
+                    </dd>
                   </div>
-                <% end %>
-                <% if quote.publication_year.present? %>
                   <div>
-                    <dt class="quote-card__label">Publication year</dt>
-                    <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                    <dt>Shared by</dt>
+                    <dd><%= quote.user.first_name %></dd>
                   </div>
-                <% end %>
-                <% if quote.user_comment.present? %>
-                  <div>
-                    <dt class="quote-card__label">Reflection</dt>
-                    <dd class="quote-card__value"><%= quote.user_comment %></dd>
-                  </div>
-                <% end %>
-              </dl>
+                  <% if quote.philosopher.biography.present? %>
+                    <div>
+                      <dt>About the philosopher</dt>
+                      <dd><%= quote.philosopher.biography %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.publication_year.present? %>
+                    <div>
+                      <dt>Publication year</dt>
+                      <dd><%= quote.publication_year %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.user_comment.present? %>
+                    <div>
+                      <dt>Reflection</dt>
+                      <dd><%= quote.user_comment %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.categories.any? %>
+                    <div>
+                      <dt>Categories</dt>
+                      <dd>
+                        <% quote.categories.each do |category| %>
+                          <span class="tag"><%= category.name %></span>
+                        <% end %>
+                      </dd>
+                    </div>
+                  <% end %>
+                </dl>
+              </div>
             </article>
           </li>
         <% end %>
