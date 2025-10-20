@@ -1,12 +1,12 @@
 source "https://rubygems.org"
 
-ruby ">= 3.0.2", "< 3.4"
+ruby ">= 3.0.2"
 
-gem "rails", "~> 7.0.4"
+gem "rails", "~> 8.0.2", ">= 8.0.2.1"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
+gem "sqlite3", ">= 1.4"
 # Use the Puma web server
-gem "puma", "~> 5.0"
+gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator
@@ -17,7 +17,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 # Use Active Model has_secure_password
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", ">= 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
@@ -31,9 +31,9 @@ end
 
 group :development do
   gem "web-console"
-  gem "listen", "~> 3.0"
+  gem "listen", ">= 3.0"
   gem "spring"
-  gem "spring-watcher-listen", "~> 2.0"
+  gem "spring-watcher-listen"
 end
 
 group :test do
