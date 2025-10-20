@@ -120,6 +120,11 @@ a:focus-visible {
   margin-left: 1rem;
 }
 
+.app-header__logout-form {
+  display: inline;
+  margin: 0;
+}
+
 .button,
 .button--ghost,
 .button--subtle,
