@@ -14,13 +14,63 @@
   <div class="hero__card">
     <p class="hero__card-label">Featured Thought</p>
     <% if @quotes.first %>
-      <blockquote class="quote-card">
-        <p class="quote-card__text">“<%= @quotes.first.text %>”</p>
-        <div class="quote-card__meta">
-          <span class="quote-card__author"><%= [@quotes.first.philosopher.first_name, @quotes.first.philosopher.last_name].compact.join(' ') %></span>
-          <span class="quote-card__contributor">Shared by <%= @quotes.first.user.first_name %></span>
+      <% quote = @quotes.first %>
+      <article class="quote-card quote-card--featured" data-quote-modal-trigger>
+        <blockquote class="quote-card__blockquote">
+          <p class="quote-card__text">“<%= quote.text %>”</p>
+        </blockquote>
+        <footer class="quote-card__meta">
+          <p class="quote-card__meta-line">
+            <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+            <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
+          </p>
+        </footer>
+        <div class="quote-card__modal-content" data-quote-modal-content hidden>
+          <dl class="quote-modal__details">
+            <div>
+              <dt>Philosopher</dt>
+              <dd>
+                <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                  <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                <% end %>
+              </dd>
+            </div>
+            <div>
+              <dt>Shared by</dt>
+              <dd><%= quote.user.first_name %></dd>
+            </div>
+            <% if quote.philosopher.biography.present? %>
+              <div>
+                <dt>About the philosopher</dt>
+                <dd><%= quote.philosopher.biography %></dd>
+              </div>
+            <% end %>
+            <% if quote.publication_year.present? %>
+              <div>
+                <dt>Publication year</dt>
+                <dd><%= quote.publication_year %></dd>
+              </div>
+            <% end %>
+            <% if quote.user_comment.present? %>
+              <div>
+                <dt>Reflection</dt>
+                <dd><%= quote.user_comment %></dd>
+              </div>
+            <% end %>
+            <% if quote.categories.any? %>
+              <div>
+                <dt>Categories</dt>
+                <dd>
+                  <% quote.categories.each do |category| %>
+                    <span class="tag"><%= category.name %></span>
+                  <% end %>
+                </dd>
+              </div>
+            <% end %>
+          </dl>
         </div>
-      </blockquote>
+      </article>
     <% else %>
       <p class="hero__card-empty">No public quotes yet—be the first to contribute.</p>
     <% end %>
@@ -37,40 +87,53 @@
     <ol class="quote-grid">
       <% @quotes.each do |quote| %>
         <li class="quote-grid__item">
-          <article class="quote-card quote-card--elevated">
+          <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
             <blockquote class="quote-card__blockquote">
               <p class="quote-card__text">“<%= quote.text %>”</p>
             </blockquote>
-            <dl class="quote-card__details">
+            <footer class="quote-card__meta">
+              <p class="quote-card__meta-line">
+                <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+                <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
+              </p>
+            </footer>
+          <div class="quote-card__modal-content" data-quote-modal-content hidden>
+            <dl class="quote-modal__details">
               <div>
-                <dt class="quote-card__label">Philosopher</dt>
-                <dd class="quote-card__value">
+                <dt>Philosopher</dt>
+                <dd>
                   <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
                   <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
-                    <span class="quote-card__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                    <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
                   <% end %>
                 </dd>
               </div>
               <div>
-                <dt class="quote-card__label">Shared by</dt>
-                <dd class="quote-card__value"><%= quote.user.first_name %></dd>
+                <dt>Shared by</dt>
+                <dd><%= quote.user.first_name %></dd>
               </div>
+              <% if quote.philosopher.biography.present? %>
+                <div>
+                  <dt>About the philosopher</dt>
+                  <dd><%= quote.philosopher.biography %></dd>
+                </div>
+              <% end %>
               <% if quote.publication_year.present? %>
                 <div>
-                  <dt class="quote-card__label">Publication</dt>
-                  <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                  <dt>Publication year</dt>
+                  <dd><%= quote.publication_year %></dd>
                 </div>
               <% end %>
               <% if quote.user_comment.present? %>
                 <div>
-                  <dt class="quote-card__label">Reflection</dt>
-                  <dd class="quote-card__value"><%= quote.user_comment %></dd>
+                  <dt>Reflection</dt>
+                  <dd><%= quote.user_comment %></dd>
                 </div>
               <% end %>
               <% if quote.categories.any? %>
                 <div>
-                  <dt class="quote-card__label">Categories</dt>
-                  <dd class="quote-card__value quote-card__tags">
+                  <dt>Categories</dt>
+                  <dd>
                     <% quote.categories.each do |category| %>
                       <span class="tag"><%= category.name %></span>
                     <% end %>
@@ -78,6 +141,7 @@
                 </div>
               <% end %>
             </dl>
+          </div>
           </article>
         </li>
       <% end %>

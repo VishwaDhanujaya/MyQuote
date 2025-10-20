@@ -65,5 +65,80 @@
     <footer class="app-footer">
       <p>&copy; <%= Time.zone.now.year %> MyQuote. Designed for reflection.</p>
     </footer>
+    <div class="quote-modal" data-quote-modal hidden>
+      <div class="quote-modal__backdrop" data-quote-modal-overlay></div>
+      <div class="quote-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="quote-modal-heading">
+        <button type="button" class="quote-modal__close" data-quote-modal-close aria-label="Close quote details">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="quote-modal__content">
+          <h2 id="quote-modal-heading" class="quote-modal__heading" data-quote-modal-title></h2>
+          <div class="quote-modal__body" data-quote-modal-body></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var modal = document.querySelector("[data-quote-modal]");
+        if (!modal) return;
+        var overlay = modal.querySelector("[data-quote-modal-overlay]");
+        var closeButton = modal.querySelector("[data-quote-modal-close]");
+        var titleElement = modal.querySelector("[data-quote-modal-title]");
+        var bodyElement = modal.querySelector("[data-quote-modal-body]");
+        if (!overlay || !closeButton || !titleElement || !bodyElement) return;
+
+        var lastFocusedElement = null;
+
+        function closeModal() {
+          modal.setAttribute("hidden", "hidden");
+          modal.classList.remove("is-open");
+          document.body.classList.remove("has-quote-modal");
+          bodyElement.innerHTML = "";
+          if (lastFocusedElement) {
+            lastFocusedElement.focus({ preventScroll: true });
+            lastFocusedElement = null;
+          }
+        }
+
+        function openModal(card) {
+          var content = card.querySelector("[data-quote-modal-content]");
+          if (!content) return;
+          lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          var quoteTextElement = card.querySelector(".quote-card__text");
+          var quoteText = quoteTextElement ? quoteTextElement.textContent.trim() : "Quote details";
+          var sanitized = quoteText.replace(/^[“\"]|[”\"]$/g, "");
+          titleElement.textContent = '“' + sanitized + '”';
+          bodyElement.innerHTML = content.innerHTML;
+          modal.removeAttribute("hidden");
+          modal.scrollTop = 0;
+          modal.classList.add("is-open");
+          document.body.classList.add("has-quote-modal");
+          closeButton.focus({ preventScroll: true });
+        }
+
+        document.querySelectorAll("[data-quote-modal-trigger]").forEach(function (card) {
+          if (!card.getAttribute("tabindex")) {
+            card.setAttribute("tabindex", "0");
+          }
+          card.addEventListener("click", function () {
+            openModal(card);
+          });
+          card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " " || event.key === "Spacebar" || event.key === "Space") {
+              event.preventDefault();
+              openModal(card);
+            }
+          });
+        });
+
+        overlay.addEventListener("click", closeModal);
+        closeButton.addEventListener("click", closeModal);
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+          }
+        });
+      });
+    </script>
   </body>
 </html>
