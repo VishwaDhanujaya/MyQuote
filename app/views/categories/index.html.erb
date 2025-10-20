@@ -4,32 +4,31 @@
     <p class="section__subtitle">Browse curated themes to surface quotes that resonate with every moment.</p>
   </header>
 
-  <div class="surface-card discover__panel">
-    <div class="category-card-grid" role="list">
-      <% @categories.each do |category| %>
-        <div class="category-card-wrapper" role="listitem">
-          <%= link_to public_category_path(category), class: "category-card" do %>
-            <span class="category-card__name"><%= category.name %></span>
-            <span class="category-card__icon" aria-hidden="true">
-              <svg viewBox="0 0 16 16" role="presentation" focusable="false">
-                <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
-              </svg>
-            </span>
-            <span class="sr-only">View <%= category.name %> quotes</span>
-          <% end %>
-          <% if admin? %>
-            <div class="category-card__admin">
-              <%= link_to "Edit", edit_category_path(category), class: "button button--minimal" %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+  <div class="category-card-grid" role="list">
+    <% @categories.each do |category| %>
+      <article class="category-card" role="listitem">
+        <%= link_to public_category_path(category), class: "category-card__link" do %>
+          <span class="category-card__name"><%= category.name %></span>
+          <span class="category-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" role="presentation" focusable="false">
+              <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
+            </svg>
+          </span>
+          <span class="sr-only">View <%= category.name %> quotes</span>
+        <% end %>
+        <% if admin? %>
+          <div class="category-card__actions" aria-label="Manage category">
+            <%= link_to "Edit", edit_category_path(category), class: "chip-button" %>
+            <%= button_to "Remove", category_path(category), method: :delete, data: { confirm: "Remove this category?" }, class: "chip-button chip-button--danger" %>
+          </div>
+        <% end %>
+      </article>
+    <% end %>
   </div>
 
   <% if admin? %>
-    <p class="section__footer">
-      Manage categories for the community? <%= link_to "Add a new category", new_category_path, class: "button button--ghost" %>
+    <p class="section__footer section__footer--actions">
+      <%= link_to "Add a new category", new_category_path, class: "button" %>
     </p>
   <% end %>
 </section>

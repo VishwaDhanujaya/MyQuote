@@ -1,39 +1,51 @@
-<h1>Manage Users</h1>
+<section class="section">
+  <header class="section__header">
+    <h1 class="section__title">Manage users</h1>
+    <p class="section__subtitle">Oversee community roles and account statuses in one focused dashboard.</p>
+  </header>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th colspan="4"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.first_name %> <%= user.last_name %></td>
-        <td><%= user.email %></td>
-        <td><%= user.role.humanize %></td>
-        <td><%= user.status.humanize %></td>
-        <td><%= link_to "Edit", edit_admin_user_path(user) %></td>
-        <td>
-          <% if user.standard? %>
-            <%= button_to "Promote", promote_admin_user_path(user), method: :patch %>
-          <% else %>
-            <%= button_to "Demote", demote_admin_user_path(user), method: :patch %>
-          <% end %>
-        </td>
-        <td>
-          <%= button_to "Set Active", set_status_admin_user_path(user, status: :active), method: :patch %>
-          <%= button_to "Suspend", set_status_admin_user_path(user, status: :suspended), method: :patch %>
-          <%= button_to "Ban", set_status_admin_user_path(user, status: :banned), method: :patch %>
-        </td>
-        <td>
-          <%= button_to "Delete", admin_user_path(user), method: :delete, data: { confirm: "Are you sure?" } %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <div class="surface-card surface-card--table">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">User</th>
+          <th scope="col">Role</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="data-table__actions-heading">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td data-label="User">
+              <p class="data-table__primary"><%= [user.first_name, user.last_name].compact.join(" ") %></p>
+              <p class="data-table__secondary"><%= user.email %></p>
+            </td>
+            <td data-label="Role">
+              <span class="badge"><%= user.role.humanize %></span>
+            </td>
+            <td data-label="Status">
+              <%= form_with url: set_status_admin_user_path(user), method: :patch, local: true, class: "inline-form" do |form| %>
+                <label class="sr-only" for="status-<%= user.id %>">Status for <%= user.first_name %> <%= user.last_name %></label>
+                <% statuses = [["Active", "active"], ["Suspended", "suspended"], ["Banned", "banned"]] %>
+                <%= form.select :status, options_for_select(statuses, user.status), {}, class: "select", id: "status-#{user.id}" %>
+                <%= form.submit "Apply", class: "button button--subtle button--sm" %>
+              <% end %>
+            </td>
+            <td data-label="Actions">
+              <div class="action-group">
+                <%= link_to "Edit", edit_admin_user_path(user), class: "button button--ghost button--sm" %>
+                <% if user.standard? %>
+                  <%= button_to "Promote", promote_admin_user_path(user), method: :patch, class: "button button--sm" %>
+                <% else %>
+                  <%= button_to "Demote", demote_admin_user_path(user), method: :patch, class: "button button--sm" %>
+                <% end %>
+                <%= button_to "Delete", admin_user_path(user), method: :delete, data: { confirm: "Are you sure?" }, class: "button button--danger button--sm" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
