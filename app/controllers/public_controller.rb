@@ -8,6 +8,8 @@ class PublicController < ApplicationController
 
   def quotes
     @query = params[:q].to_s.strip
+    @selected_category_ids = Array(params[:categories]).reject(&:blank?).map(&:to_i)
+
     scope = Quote.includes(:user, :philosopher, :categories)
                  .where(is_public: true)
 
@@ -24,10 +26,21 @@ class PublicController < ApplicationController
                      query: normalized_query
                    )
                    .distinct
+    else
+      scope = scope.joins(:philosopher)
+    end
+
+    if @selected_category_ids.any?
+      matching_ids = Quote.joins(:categories)
+                          .where(categories: { id: @selected_category_ids })
+                          .group(:id)
+                          .having("COUNT(DISTINCT categories.id) = ?", @selected_category_ids.size)
+      scope = scope.where(id: matching_ids)
     end
 
     @quotes = scope.order(created_at: :desc)
     @categories = Category.order(:name)
+    @selected_categories = Category.where(id: @selected_category_ids).order(:name)
   end
 
   def by_category
