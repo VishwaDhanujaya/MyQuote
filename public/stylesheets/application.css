@@ -547,13 +547,16 @@ table tbody tr:hover {
   flex-direction: column;
   gap: 0.65rem;
   width: 100%;
-  max-width: 720px;
-  margin-inline: auto;
+  margin: 0;
   padding: 1.3rem clamp(1rem, 3vw, 1.6rem);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: 0 18px 32px rgba(0, 0, 0, 0.5);
+}
+
+.discover__layout {
+  width: 100%;
 }
 
 .discover__categories {
@@ -700,11 +703,20 @@ table tbody tr:hover {
   gap: 0.75rem;
 }
 
+.discover__categories .filter-card-grid {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
 .filter-card-grid__item {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
   min-width: 0;
+}
+
+.discover__categories .filter-card-grid__item {
+  width: 100%;
 }
 
 .filter-card {
@@ -721,6 +733,11 @@ table tbody tr:hover {
   font-weight: 600;
   letter-spacing: 0.01em;
   transition: background-color var(--transition), border-color var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.discover__categories .filter-card {
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .filter-card:hover,
@@ -2088,12 +2105,6 @@ body.has-quote-modal {
 @media (max-width: 960px) {
   .layout--with-sidebar {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 900px) {
-  .discover__search {
-    max-width: 820px;
   }
 }
 

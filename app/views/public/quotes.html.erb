@@ -19,128 +19,125 @@
     <% end %>
   </div>
 
-  <section class="discover__categories" aria-labelledby="discover-categories-heading">
-    <div class="discover__categories-header">
-      <h2 id="discover-categories-heading" class="discover__categories-title">Browse by category</h2>
-      <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
-    </div>
-    <% if @selected_categories.present? %>
-      <div class="discover__active-filters" aria-live="polite">
-        <h3 class="discover__active-filters-title">Active filters</h3>
-        <ul class="filter-chip-list">
-          <% @selected_categories.each do |category| %>
-            <% remaining_ids = @selected_category_ids - [category.id] %>
-            <% filter_params = { q: @query.presence, categories: remaining_ids.presence }.compact %>
-            <li class="filter-chip-list__item">
-              <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
-                          class: "filter-chip",
-                          "aria-label": "Remove #{category.name} filter") do %>
-                <span class="filter-chip__label"><%= category.name %></span>
-                <span class="filter-chip__remove" aria-hidden="true">&times;</span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-        <%= link_to "Clear all filters",
-                    public_quotes_path(q: @query.presence),
-                    class: "filter-chip filter-chip--clear" %>
+  <!-- Sidebar layout keeps filters anchored to the left of the result grid. -->
+  <div class="discover__layout layout layout--with-sidebar">
+    <aside class="discover__categories" aria-labelledby="discover-categories-heading">
+      <div class="discover__categories-header">
+        <h2 id="discover-categories-heading" class="discover__categories-title">Browse by category</h2>
+        <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
       </div>
-    <% end %>
-    <ul class="filter-card-grid" role="list">
-      <% @categories.each do |category| %>
-        <% selected = @selected_category_ids.include?(category.id) %>
-        <% toggle_ids = if selected
-                          @selected_category_ids - [category.id]
-                        else
-                          (@selected_category_ids + [category.id]).uniq
-                        end %>
-        <% filter_params = { q: @query.presence, categories: toggle_ids.presence }.compact %>
-        <li class="filter-card-grid__item">
-          <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
-                      class: "filter-card #{'filter-card--active' if selected}",
-                      role: "button",
-                      "aria-pressed": selected,
-                      data: { turbo: false }) do %>
-            <span class="filter-card__label"><%= category.name %></span>
-            <span class="sr-only"><%= selected ? "Remove" : "Add" %> <%= category.name %> filter</span>
-          <% end %>
-          <% if admin? %>
-            <div class="filter-card__actions" aria-label="Manage category">
-              <%= link_to "Edit", edit_category_path(category), class: "chip-button" %>
-              <%= button_to "Remove", category_path(category), method: :delete, data: { confirm: "Remove this category?" }, class: "chip-button chip-button--danger" %>
-            </div>
-          <% end %>
-        </li>
+      <% if @selected_categories.present? %>
+        <div class="discover__active-filters" aria-live="polite">
+          <h3 class="discover__active-filters-title">Active filters</h3>
+          <ul class="filter-chip-list">
+            <% @selected_categories.each do |category| %>
+              <% remaining_ids = @selected_category_ids - [category.id] %>
+              <% filter_params = { q: @query.presence, categories: remaining_ids.presence }.compact %>
+              <li class="filter-chip-list__item">
+                <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
+                            class: "filter-chip",
+                            "aria-label": "Remove #{category.name} filter") do %>
+                  <span class="filter-chip__label"><%= category.name %></span>
+                  <span class="filter-chip__remove" aria-hidden="true">&times;</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+          <%= link_to "Clear all filters",
+                      public_quotes_path(q: @query.presence),
+                      class: "filter-chip filter-chip--clear" %>
+        </div>
       <% end %>
-    </ul>
-  </section>
-
-  <div class="discover__results" aria-live="polite">
-    <% if @quotes.any? %>
-      <ul class="quote-grid">
-        <% @quotes.each do |quote| %>
-          <li class="quote-grid__item">
-            <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
-              <blockquote class="quote-card__blockquote">
-                <p class="quote-card__text">“<%= quote.text %>”</p>
-              </blockquote>
-              <footer class="quote-card__meta">
-                <p class="quote-card__meta-line">
-                  <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
-                  <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
-                </p>
-              </footer>
-              <div class="quote-card__modal-content" data-quote-modal-content hidden>
-                <dl class="quote-modal__details">
-                  <div>
-                    <dt>Philosopher</dt>
-                    <dd>
-                      <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
-                      <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
-                        <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
-                      <% end %>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Shared by</dt>
-                    <dd><%= quote.user.first_name %></dd>
-                  </div>
-                  <% if quote.philosopher.biography.present? %>
-                    <div>
-                      <dt>About the philosopher</dt>
-                      <dd><%= quote.philosopher.biography %></dd>
-                    </div>
-                  <% end %>
-                  <% if quote.publication_year.present? %>
-                    <div>
-                      <dt>Publication year</dt>
-                      <dd><%= quote.publication_year %></dd>
-                    </div>
-                  <% end %>
-                  <% if quote.user_comment.present? %>
-                    <div>
-                      <dt>Reflection</dt>
-                      <dd><%= quote.user_comment %></dd>
-                    </div>
-                  <% end %>
-                  <% if quote.categories.any? %>
-                    <div>
-                      <dt>Categories</dt>
-                      <dd>
-                        <% quote.categories.each do |category| %>
-                          <span class="tag"><%= category.name %></span>
-                        <% end %>
-                      </dd>
-                    </div>
-                  <% end %>
-                </dl>
-              </div>
-            </article>
+      <ul class="filter-card-grid" role="list">
+        <% @categories.each do |category| %>
+          <% selected = @selected_category_ids.include?(category.id) %>
+          <% toggle_ids = if selected
+                            @selected_category_ids - [category.id]
+                          else
+                            (@selected_category_ids + [category.id]).uniq
+                          end %>
+          <% filter_params = { q: @query.presence, categories: toggle_ids.presence }.compact %>
+          <li class="filter-card-grid__item">
+            <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
+                        class: "filter-card #{'filter-card--active' if selected}",
+                        role: "button",
+                        "aria-pressed": selected,
+                        data: { turbo: false }) do %>
+              <span class="filter-card__label"><%= category.name %></span>
+              <span class="sr-only"><%= selected ? "Remove" : "Add" %> <%= category.name %> filter</span>
+            <% end %>
           </li>
         <% end %>
       </ul>
-    <% else %>
-      <p class="empty-state">No quotes match your search. Try a different keyword or browse a category.</p>
-    <% end %>
+    </aside>
+
+    <div class="discover__results" aria-live="polite">
+      <% if @quotes.any? %>
+        <ul class="quote-grid">
+          <% @quotes.each do |quote| %>
+            <li class="quote-grid__item">
+              <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
+                <blockquote class="quote-card__blockquote">
+                  <p class="quote-card__text">“<%= quote.text %>”</p>
+                </blockquote>
+                <footer class="quote-card__meta">
+                  <p class="quote-card__meta-line">
+                    <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+                    <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
+                  </p>
+                </footer>
+                <div class="quote-card__modal-content" data-quote-modal-content hidden>
+                  <dl class="quote-modal__details">
+                    <div>
+                      <dt>Philosopher</dt>
+                      <dd>
+                        <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                        <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                          <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                        <% end %>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Shared by</dt>
+                      <dd><%= quote.user.first_name %></dd>
+                    </div>
+                    <% if quote.philosopher.biography.present? %>
+                      <div>
+                        <dt>About the philosopher</dt>
+                        <dd><%= quote.philosopher.biography %></dd>
+                      </div>
+                    <% end %>
+                    <% if quote.publication_year.present? %>
+                      <div>
+                        <dt>Publication year</dt>
+                        <dd><%= quote.publication_year %></dd>
+                      </div>
+                    <% end %>
+                    <% if quote.user_comment.present? %>
+                      <div>
+                        <dt>Reflection</dt>
+                        <dd><%= quote.user_comment %></dd>
+                      </div>
+                    <% end %>
+                    <% if quote.categories.any? %>
+                      <div>
+                        <dt>Categories</dt>
+                        <dd>
+                          <% quote.categories.each do |category| %>
+                            <span class="tag"><%= category.name %></span>
+                          <% end %>
+                        </dd>
+                      </div>
+                    <% end %>
+                  </dl>
+                </div>
+              </article>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="empty-state">No quotes match your search. Try a different keyword or browse a category.</p>
+      <% end %>
+    </div>
   </div>
 </section>
