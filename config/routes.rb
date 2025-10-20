@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   resources :categories, except: %i[show]
 
   namespace :admin do
-    resources :users do
+    resources :users, only: %i[index edit update destroy] do
       member do
         patch :promote
         patch :demote
