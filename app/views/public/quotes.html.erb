@@ -7,6 +7,9 @@
   <div class="discover__search" role="search">
     <%= form_with url: public_quotes_path, method: :get, local: true, class: "search search--standalone" do |form| %>
       <%= form.label :q, "Search by keyword", class: "search__label" %>
+      <% @selected_category_ids.each do |category_id| %>
+        <%= hidden_field_tag "categories[]", category_id, id: nil %>
+      <% end %>
       <div class="search__control">
         <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
         <button type="submit" class="search__button">
@@ -21,17 +24,53 @@
       <h2 id="discover-categories-heading" class="discover__categories-title">Browse by category</h2>
       <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
     </div>
+    <% if @selected_categories.present? %>
+      <div class="discover__active-filters" aria-live="polite">
+        <h3 class="discover__active-filters-title">Active filters</h3>
+        <ul class="filter-chip-list">
+          <% @selected_categories.each do |category| %>
+            <% remaining_ids = @selected_category_ids - [category.id] %>
+            <% filter_params = { q: @query.presence, categories: remaining_ids.presence }.compact %>
+            <li class="filter-chip-list__item">
+              <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
+                          class: "filter-chip",
+                          "aria-label": "Remove #{category.name} filter") do %>
+                <span class="filter-chip__label"><%= category.name %></span>
+                <span class="filter-chip__remove" aria-hidden="true">&times;</span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+        <%= link_to "Clear all filters",
+                    public_quotes_path(q: @query.presence),
+                    class: "filter-chip filter-chip--clear" %>
+      </div>
+    <% end %>
     <div class="category-card-grid" role="list">
       <% @categories.each do |category| %>
-        <article class="category-card" role="listitem">
-          <%= link_to public_category_path(category), class: "category-card__link" do %>
+        <% selected = @selected_category_ids.include?(category.id) %>
+        <% toggle_ids = if selected
+                          @selected_category_ids - [category.id]
+                        else
+                          (@selected_category_ids + [category.id]).uniq
+                        end %>
+        <% filter_params = { q: @query.presence, categories: toggle_ids.presence }.compact %>
+        <article class="category-card <%= 'category-card--active' if selected %>" role="listitem">
+          <%= link_to(filter_params.present? ? public_quotes_path(filter_params) : public_quotes_path,
+                      class: "category-card__link",
+                      role: "button",
+                      "aria-pressed": selected,
+                      data: { turbo: false }) do %>
             <span class="category-card__name"><%= category.name %></span>
             <span class="category-card__icon" aria-hidden="true">
               <svg viewBox="0 0 16 16" role="presentation" focusable="false">
                 <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
               </svg>
             </span>
-            <span class="sr-only">View <%= category.name %> quotes</span>
+            <span class="category-card__state" aria-hidden="true">
+              <%= selected ? 'Selected' : 'Select' %>
+            </span>
+            <span class="sr-only"><%= selected ? "Remove" : "Add" %> <%= category.name %> filter</span>
           <% end %>
           <% if admin? %>
             <div class="category-card__actions" aria-label="Manage category">
