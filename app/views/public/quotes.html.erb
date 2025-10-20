@@ -3,66 +3,119 @@
   <p class="section__subtitle">Search by theme or explore curated categories to find the perfect words for every moment.</p>
 </header>
 
-<div class="layout layout--with-sidebar">
-  <aside class="sidebar">
-    <div class="sidebar__card">
-      <h2 class="sidebar__title">Search</h2>
+<section class="discover">
+  <div class="discover__controls">
+    <div class="surface-card discover__panel">
+      <h2 class="surface-card__title">Search quotes</h2>
       <%= form_with url: public_quotes_path, method: :get, local: true, class: "search" do |form| %>
-        <div class="search__field">
-          <%= form.label :q, "Search by keyword", class: "search__label" %>
-          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "e.g. courage, love" %>
+        <%= form.label :q, "Search by keyword", class: "search__label" %>
+        <div class="search__control">
+          <span class="search__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+              <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+            </svg>
+          </span>
+          <%= form.text_field :q, value: @query, class: "search__input", placeholder: "Search quotes..." %>
+          <button type="submit" class="search__button">
+            <span class="search__button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79l5 4.99L20.49 19zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="search__button-label">Search</span>
+          </button>
         </div>
-        <%= form.submit "Search", class: "button button--primary search__submit" %>
       <% end %>
     </div>
 
-    <div class="sidebar__card">
-      <h2 class="sidebar__title">Categories</h2>
-      <ul class="category-list">
+    <div class="surface-card discover__panel discover__categories">
+      <div>
+        <h2 class="surface-card__title">Browse by category</h2>
+        <p class="section__subtitle">Select a theme to jump straight into quotes that match your mood.</p>
+      </div>
+      <div class="category-card-grid" role="list">
         <% @categories.each do |category| %>
-          <li class="category-list__item"><%= link_to category.name, public_category_path(category), class: "category-list__link" %></li>
+          <div class="category-card-wrapper" role="listitem">
+            <%= link_to public_category_path(category), class: "category-card" do %>
+              <span class="category-card__name"><%= category.name %></span>
+              <span class="category-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" role="presentation" focusable="false">
+                  <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
+                </svg>
+              </span>
+              <span class="sr-only">View <%= category.name %> quotes</span>
+            <% end %>
+            <% if admin? %>
+              <div class="category-card__admin">
+                <%= link_to "Edit", edit_category_path(category), class: "button button--minimal" %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
-  </aside>
+  </div>
 
-  <section class="section layout__content">
+  <div class="discover__results" aria-live="polite">
     <% if @quotes.any? %>
       <ul class="quote-grid">
         <% @quotes.each do |quote| %>
           <li class="quote-grid__item">
-            <article class="quote-card quote-card--elevated">
+            <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
               <blockquote class="quote-card__blockquote">
                 <p class="quote-card__text">“<%= quote.text %>”</p>
               </blockquote>
-              <dl class="quote-card__details">
-                <div>
-                  <dt class="quote-card__label">Philosopher</dt>
-                  <dd class="quote-card__value"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></dd>
-                </div>
-                <div>
-                  <dt class="quote-card__label">Shared by</dt>
-                  <dd class="quote-card__value"><%= quote.user.first_name %></dd>
-                </div>
-                <% if quote.philosopher.biography.present? %>
+              <footer class="quote-card__meta">
+                <p class="quote-card__meta-line">
+                  <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+                  <span class="quote-card__meta-contributor">Shared by <%= quote.user.first_name %></span>
+                </p>
+              </footer>
+              <div class="quote-card__modal-content" data-quote-modal-content hidden>
+                <dl class="quote-modal__details">
                   <div>
-                    <dt class="quote-card__label">About the philosopher</dt>
-                    <dd class="quote-card__value"><%= quote.philosopher.biography %></dd>
+                    <dt>Philosopher</dt>
+                    <dd>
+                      <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                      <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                        <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                      <% end %>
+                    </dd>
                   </div>
-                <% end %>
-                <% if quote.publication_year.present? %>
                   <div>
-                    <dt class="quote-card__label">Publication year</dt>
-                    <dd class="quote-card__value"><%= quote.publication_year %></dd>
+                    <dt>Shared by</dt>
+                    <dd><%= quote.user.first_name %></dd>
                   </div>
-                <% end %>
-                <% if quote.user_comment.present? %>
-                  <div>
-                    <dt class="quote-card__label">Reflection</dt>
-                    <dd class="quote-card__value"><%= quote.user_comment %></dd>
-                  </div>
-                <% end %>
-              </dl>
+                  <% if quote.philosopher.biography.present? %>
+                    <div>
+                      <dt>About the philosopher</dt>
+                      <dd><%= quote.philosopher.biography %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.publication_year.present? %>
+                    <div>
+                      <dt>Publication year</dt>
+                      <dd><%= quote.publication_year %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.user_comment.present? %>
+                    <div>
+                      <dt>Reflection</dt>
+                      <dd><%= quote.user_comment %></dd>
+                    </div>
+                  <% end %>
+                  <% if quote.categories.any? %>
+                    <div>
+                      <dt>Categories</dt>
+                      <dd>
+                        <% quote.categories.each do |category| %>
+                          <span class="tag"><%= category.name %></span>
+                        <% end %>
+                      </dd>
+                    </div>
+                  <% end %>
+                </dl>
+              </div>
             </article>
           </li>
         <% end %>
@@ -70,5 +123,5 @@
     <% else %>
       <p class="empty-state">No quotes match your search. Try a different keyword or browse a category.</p>
     <% end %>
-  </section>
-</div>
+  </div>
+</section>

@@ -1,13 +1,21 @@
-<h1>Login</h1>
+<section class="section section--narrow">
+  <header class="section__header">
+    <h1 class="section__title">Welcome back</h1>
+    <p class="section__subtitle">Log in to curate your personal library and keep sharing the quotes you love.</p>
+  </header>
 
-<%= form_with url: login_path, local: true do |form| %>
-  <div>
-    <%= form.label :email %>
-    <%= form.email_field :email, required: true %>
-  </div>
-  <div>
-    <%= form.label :password %>
-    <%= form.password_field :password, required: true %>
-  </div>
-  <%= form.submit "Log in" %>
-<% end %>
+  <%= form_with url: login_path, local: true, html: { class: "form-card" } do |form| %>
+    <div class="form-field">
+      <%= form.label :email, class: "form-field__label" %>
+      <%= form.email_field :email, required: true, class: "form-field__control" %>
+    </div>
+    <div class="form-field">
+      <%= form.label :password, class: "form-field__label" %>
+      <%= form.password_field :password, required: true, class: "form-field__control" %>
+    </div>
+    <div class="form-card__actions">
+      <%= link_to "Create an account", new_user_path, class: "button button--subtle" %>
+      <%= form.submit "Log in", class: "button" %>
+    </div>
+  <% end %>
+</section>

@@ -1,8 +1,10 @@
-<%= form_with model: @quote, local: true do |form| %>
+<% cancel_path = @quote.persisted? ? quote_path(@quote) : quotes_path %>
+
+<%= form_with model: @quote, local: true, html: { class: "form-card" } do |form| %>
   <% if @quote.errors.any? %>
-    <div class="errors">
-      <h2><%= pluralize(@quote.errors.count, "error") %> prohibited this quote from being saved:</h2>
-      <ul>
+    <div class="form-card__errors" role="alert">
+      <h2 class="form-card__errors-title"><%= pluralize(@quote.errors.count, "error") %> prevented saving this quote</h2>
+      <ul class="form-card__error-list">
         <% @quote.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -10,36 +12,47 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :text, "Quote" %>
-    <%= form.text_area :text, required: true, rows: 4 %>
+  <div class="form-field">
+    <%= form.label :text, "Quote", class: "form-field__label" %>
+    <%= form.text_area :text, required: true, rows: 4, class: "form-field__control" %>
+    <p class="form-field__hint">Share the quote exactly as it was written. We’ll add the smart quotes for you.</p>
   </div>
 
-  <div>
-    <%= form.label :publication_year %>
-    <%= form.number_field :publication_year %>
+  <div class="form-field">
+    <%= form.label :philosopher_id, "Philosopher", class: "form-field__label" %>
+    <%= form.collection_select :philosopher_id, @philosophers, :id, ->(p) { [p.first_name, p.last_name].compact.join(' ') }, { prompt: "Select a philosopher" }, { required: true, class: "form-field__control" } %>
   </div>
 
-  <div>
-    <%= form.label :user_comment, "Your Comment" %>
-    <%= form.text_area :user_comment, rows: 3 %>
+  <div class="form-field">
+    <%= form.label :category_ids, "Categories", class: "form-field__label" %>
+    <%= form.collection_select :category_ids, @categories, :id, :name, { prompt: false }, { multiple: true, required: true, size: 5, class: "form-field__control" } %>
+    <p class="form-field__hint">Choose at least one theme so others can discover your quote.</p>
   </div>
 
-  <div>
-    <%= form.label :is_public, "Make this quote public" %>
-    <%= form.check_box :is_public %>
+  <div class="form-field">
+    <%= form.label :publication_year, "Publication year", class: "form-field__label" %>
+    <%= form.number_field :publication_year, placeholder: "e.g. 1879", class: "form-field__control" %>
+    <p class="form-field__hint">Optional. Add the year the quote first appeared.</p>
   </div>
 
-  <div>
-    <%= form.label :philosopher_id, "Philosopher" %>
-    <%= form.collection_select :philosopher_id, @philosophers, :id, ->(p) { [p.first_name, p.last_name].compact.join(' ') }, prompt: "Select a philosopher", required: true %>
+  <div class="form-field">
+    <%= form.label :user_comment, "Your reflection", class: "form-field__label" %>
+    <%= form.text_area :user_comment, rows: 3, placeholder: "What does this quote mean to you?", class: "form-field__control" %>
+    <p class="form-field__hint">Optional. Share context or personal insight for other readers.</p>
   </div>
 
-  <div>
-    <%= form.label :category_ids, "Categories" %>
-    <%= form.collection_select :category_ids, @categories, :id, :name, { prompt: false }, { multiple: true, required: true, size: 5 } %>
-    <p>Select at least one category.</p>
+  <div class="form-field form-field--checkbox">
+    <div class="form-field__option">
+      <%= form.check_box :is_public %>
+    </div>
+    <div>
+      <%= form.label :is_public, "Make this quote public", class: "form-field__label" %>
+      <p class="form-field__hint">Public quotes appear on the Discover page for everyone to enjoy.</p>
+    </div>
   </div>
 
-  <%= form.submit %>
+  <div class="form-card__actions">
+    <%= link_to "Cancel", cancel_path, class: "button button--subtle" %>
+    <%= form.submit(@quote.persisted? ? "Save changes" : "Create quote", class: "button") %>
+  </div>
 <% end %>

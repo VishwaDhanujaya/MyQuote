@@ -1,16 +1,35 @@
-<h1>Categories</h1>
+<section class="section">
+  <header class="section__header">
+    <h1 class="section__title">Categories</h1>
+    <p class="section__subtitle">Browse curated themes to surface quotes that resonate with every moment.</p>
+  </header>
 
-<ul>
-  <% @categories.each do |category| %>
-    <li>
-      <%= link_to category.name, public_category_path(category) %>
-      <% if admin? %>
-        (<%= link_to "Edit", edit_category_path(category) %>)
+  <div class="surface-card discover__panel">
+    <div class="category-card-grid" role="list">
+      <% @categories.each do |category| %>
+        <div class="category-card-wrapper" role="listitem">
+          <%= link_to public_category_path(category), class: "category-card" do %>
+            <span class="category-card__name"><%= category.name %></span>
+            <span class="category-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" role="presentation" focusable="false">
+                <path d="M5.5 3.5a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06-1.06L8.94 8l-3.44-3.44a.75.75 0 0 1 0-1.06z" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="sr-only">View <%= category.name %> quotes</span>
+          <% end %>
+          <% if admin? %>
+            <div class="category-card__admin">
+              <%= link_to "Edit", edit_category_path(category), class: "button button--minimal" %>
+            </div>
+          <% end %>
+        </div>
       <% end %>
-    </li>
-  <% end %>
-</ul>
+    </div>
+  </div>
 
-<% if admin? %>
-  <p><%= link_to "New Category", new_category_path %></p>
-<% end %>
+  <% if admin? %>
+    <p class="section__footer">
+      Manage categories for the community? <%= link_to "Add a new category", new_category_path, class: "button button--ghost" %>
+    </p>
+  <% end %>
+</section>
