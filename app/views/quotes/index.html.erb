@@ -11,26 +11,27 @@
 <% if @quotes.any? %>
   <section class="quotes-grid" aria-live="polite">
     <% @quotes.each do |quote| %>
-      <article class="quote-card">
-        <%= link_to quote_path(quote), class: "quote-card__link" do %>
-          <span class="sr-only">View quote details</span>
-        <% end %>
-        <p class="quote-card__text">“<%= truncate(quote.text, length: 180) %>”</p>
+      <article class="quote-card quote-card--elevated" data-quote-modal-trigger>
+        <blockquote class="quote-card__blockquote">
+          <p class="quote-card__text">“<%= truncate(quote.text, length: 180) %>”</p>
+        </blockquote>
 
-        <div class="quote-card__meta">
-          <div class="quote-card__meta-row">
-            <span class="quote-card__meta-label">Philosopher</span>
-            <span><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
-          </div>
-          <div class="quote-card__meta-row">
-            <span class="quote-card__meta-label">Visibility</span>
-            <span><%= quote.is_public? ? "Public" : "Private" %></span>
-          </div>
+        <footer class="quote-card__meta">
+          <p class="quote-card__meta-line">
+            <span class="quote-card__meta-author"><%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %></span>
+            <span class="quote-card__meta-contributor"><%= quote.is_public? ? "Public quote" : "Private quote" %></span>
+          </p>
           <% if quote.publication_year.present? %>
-            <div class="quote-card__meta-row">
+            <p class="quote-card__meta-line">
               <span class="quote-card__meta-label">Year</span>
               <span><%= quote.publication_year %></span>
-            </div>
+            </p>
+          <% end %>
+          <% if admin? %>
+            <p class="quote-card__meta-line">
+              <span class="quote-card__meta-label">Owner</span>
+              <span><%= [quote.user.first_name, quote.user.last_name].compact.join(' ') %></span>
+            </p>
           <% end %>
           <% if quote.categories.any? %>
             <div class="quote-card__chips" aria-label="Categories">
@@ -39,17 +40,56 @@
               <% end %>
             </div>
           <% end %>
-          <% if admin? %>
-            <div class="quote-card__meta-row">
-              <span class="quote-card__meta-label">Owner</span>
-              <span><%= [quote.user.first_name, quote.user.last_name].compact.join(' ') %></span>
-            </div>
-          <% end %>
-        </div>
+        </footer>
 
-        <div class="quote-card__actions">
-          <%= link_to "Edit", edit_quote_path(quote), class: "button button--ghost button--sm" %>
-          <%= button_to "Delete", quote_path(quote), method: :delete, data: { confirm: "Are you sure?" }, class: "button button--danger button--sm" %>
+        <div class="quote-card__modal-content" data-quote-modal-content hidden>
+          <dl class="quote-modal__details">
+            <div>
+              <dt>Philosopher</dt>
+              <dd>
+                <%= [quote.philosopher.first_name, quote.philosopher.last_name].compact.join(' ') %>
+                <% if quote.philosopher.birth_year.present? || quote.philosopher.death_year.present? %>
+                  <span class="quote-modal__years">(<%= [quote.philosopher.birth_year, quote.philosopher.death_year].compact.join(' – ') %>)</span>
+                <% end %>
+              </dd>
+            </div>
+            <div>
+              <dt>Visibility</dt>
+              <dd><%= quote.is_public? ? "Public" : "Private" %></dd>
+            </div>
+            <% if admin? %>
+              <div>
+                <dt>Owner</dt>
+                <dd><%= [quote.user.first_name, quote.user.last_name].compact.join(' ') %></dd>
+              </div>
+            <% end %>
+            <% if quote.publication_year.present? %>
+              <div>
+                <dt>Publication year</dt>
+                <dd><%= quote.publication_year %></dd>
+              </div>
+            <% end %>
+            <% if quote.user_comment.present? %>
+              <div>
+                <dt>Reflection</dt>
+                <dd><%= quote.user_comment %></dd>
+              </div>
+            <% end %>
+            <% if quote.categories.any? %>
+              <div>
+                <dt>Categories</dt>
+                <dd>
+                  <% quote.categories.each do |category| %>
+                    <span class="tag"><%= category.name %></span>
+                  <% end %>
+                </dd>
+              </div>
+            <% end %>
+          </dl>
+          <div class="quote-modal__actions">
+            <%= link_to "Edit quote", edit_quote_path(quote), class: "button button--subtle button--sm" %>
+            <%= button_to "Delete quote", quote_path(quote), method: :delete, data: { turbo_confirm: "Delete this quote? This action cannot be undone." }, class: "button button--plain-danger button--sm", form: { class: "quote-modal__action-form" } %>
+          </div>
         </div>
       </article>
     <% end %>
