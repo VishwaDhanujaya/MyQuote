@@ -1,10 +1,14 @@
 class QuotesController < ApplicationController
+  # Authenticated users manage their personal quotes here, while admins see all
+  # records. Category data is preloaded for the forms that require it.
   before_action :require_login
   before_action :require_active_user
   before_action :set_quote, only: %i[show edit update destroy]
   before_action :authorize_quote_access!, only: %i[show edit update destroy]
   before_action :load_categories, only: %i[new edit create update]
 
+  # Lists either the current user’s quotes or the entire catalogue for admins,
+  # ordering newest first to highlight recent additions.
   def index
     @quotes = if admin?
                 Quote.includes(:user, :philosopher, :categories).order(created_at: :desc)
@@ -13,12 +17,17 @@ class QuotesController < ApplicationController
               end
   end
 
+  # Renders the details for the selected quote. Authorization happens in the
+  # before actions.
   def show; end
 
+  # Presents an empty quote form pre-associated with the logged in user.
   def new
     @quote = current_user.quotes.build
   end
 
+  # Builds a quote, applies nested category/philosopher updates, and persists it
+  # when all validations succeed.
   def create
     @quote = current_user.quotes.build
     attributes = quote_params
@@ -31,8 +40,11 @@ class QuotesController < ApplicationController
     end
   end
 
+  # Displays the edit form for an existing quote.
   def edit; end
 
+  # Applies attribute changes from the form, including nested philosopher data,
+  # and re-renders the form if validations fail.
   def update
     attributes = quote_params
     assign_quote_attributes(@quote, attributes)
@@ -44,6 +56,7 @@ class QuotesController < ApplicationController
     end
   end
 
+  # Removes the quote entirely once authorization has been verified.
   def destroy
     @quote.destroy
     redirect_to quotes_path, notice: "Quote deleted successfully."
@@ -51,10 +64,12 @@ class QuotesController < ApplicationController
 
   private
 
+  # Looks up the quote being managed to share the result across actions.
   def set_quote
     @quote = Quote.find(params[:id])
   end
 
+  # Ensures non-admins can only view or edit their own quotes.
   def authorize_quote_access!
     return if admin?
     return if @quote.user == current_user
@@ -62,10 +77,13 @@ class QuotesController < ApplicationController
     redirect_to quotes_path, alert: "You are not authorized to access this quote."
   end
 
+  # Provides a sorted list for checkboxes/selects used in quote forms.
   def load_categories
     @categories = Category.order(:name)
   end
 
+  # Whitelists quote parameters and normalizes blank category IDs so the model
+  # validations receive consistent data.
   def quote_params
     permitted = params.require(:quote).permit(
       :text,
@@ -82,6 +100,8 @@ class QuotesController < ApplicationController
     permitted.to_h.symbolize_keys
   end
 
+  # Applies the permitted attributes to the quote and coordinates nested
+  # philosopher/category handling so the controller remains thin.
   def assign_quote_attributes(quote, attributes)
     attrs = attributes.dup
     category_ids = attrs.delete(:category_ids)
@@ -93,6 +113,8 @@ class QuotesController < ApplicationController
     assign_philosopher(quote, philosopher_attrs)
   end
 
+  # Resolves or builds the philosopher referenced in the form, attaching the
+  # resulting record to the quote while surfacing validation failures.
   def assign_philosopher(quote, philosopher_attrs)
     first_name = philosopher_attrs[:philosopher_first_name].to_s.strip
     last_name = philosopher_attrs[:philosopher_last_name].to_s.strip

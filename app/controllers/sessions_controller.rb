@@ -1,6 +1,9 @@
 class SessionsController < ApplicationController
+  # Shows the login form.
   def new; end
 
+  # Authenticates the provided credentials, prevents inactive accounts from
+  # logging in, and surfaces precise feedback for failure cases.
   def create
     user = User.find_by(email: params[:email].to_s.strip.downcase)
 
@@ -18,6 +21,7 @@ class SessionsController < ApplicationController
     end
   end
 
+  # Ends the session and returns the visitor to the public homepage.
   def destroy
     reset_session
     redirect_to root_path, notice: "Logged out successfully."
