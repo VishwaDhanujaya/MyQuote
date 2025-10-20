@@ -138,6 +138,74 @@
             closeModal();
           }
         });
+
+        document.querySelectorAll("[data-category-selector]").forEach(function (picker) {
+          var select = picker.querySelector("select");
+          var addButton = picker.querySelector("[data-category-selector-add]");
+          var list = picker.querySelector("[data-category-selector-list]");
+          var template = picker.querySelector("[data-category-selector-template]");
+          var emptyState = picker.querySelector("[data-category-selector-empty]");
+
+          if (!select || !addButton || !list || !template) {
+            return;
+          }
+
+          function toggleEmptyState() {
+            if (!emptyState) return;
+            if (list.querySelector("[data-category-chip]")) {
+              emptyState.setAttribute("hidden", "hidden");
+            } else {
+              emptyState.removeAttribute("hidden");
+            }
+          }
+
+          function attachRemoveHandler(chip) {
+            var removeButton = chip.querySelector("[data-category-remove]");
+            if (!removeButton) return;
+            removeButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              chip.remove();
+              toggleEmptyState();
+            });
+          }
+
+          list.querySelectorAll("[data-category-chip]").forEach(attachRemoveHandler);
+          toggleEmptyState();
+
+          addButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            var option = select.options[select.selectedIndex];
+            if (!option || !option.value) {
+              return;
+            }
+
+            if (list.querySelector('[data-category-id="' + option.value + '"]')) {
+              return;
+            }
+
+            var fragment = template.content.cloneNode(true);
+            var chip = fragment.querySelector("[data-category-chip]");
+            var name = chip.querySelector("[data-category-name]");
+            var input = chip.querySelector("[data-category-value]");
+            var removeButton = chip.querySelector("[data-category-remove]");
+
+            chip.dataset.categoryId = option.value;
+            if (name) {
+              name.textContent = option.textContent;
+            }
+            if (input) {
+              input.value = option.value;
+            }
+            if (removeButton) {
+              removeButton.setAttribute("aria-label", "Remove " + option.textContent);
+            }
+
+            list.appendChild(chip);
+            attachRemoveHandler(chip);
+            toggleEmptyState();
+            select.selectedIndex = 0;
+          });
+        });
       });
     </script>
   </body>

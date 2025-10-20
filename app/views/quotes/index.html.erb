@@ -53,6 +53,12 @@
                 <% end %>
               </dd>
             </div>
+            <% if quote.philosopher.biography.present? %>
+              <div>
+                <dt>About the philosopher</dt>
+                <dd><%= quote.philosopher.biography %></dd>
+              </div>
+            <% end %>
             <div>
               <dt>Visibility</dt>
               <dd><%= quote.is_public? ? "Public" : "Private" %></dd>

@@ -19,14 +19,51 @@
   </div>
 
   <div class="form-field">
-    <%= form.label :philosopher_id, "Philosopher", class: "form-field__label" %>
-    <%= form.collection_select :philosopher_id, @philosophers, :id, ->(p) { [p.first_name, p.last_name].compact.join(' ') }, { prompt: "Select a philosopher" }, { required: true, class: "form-field__control" } %>
+    <%= form.label :philosopher_first_name, "Philosopher", class: "form-field__label" %>
+    <div class="form-field__stack">
+      <div class="form-field__stack-item">
+        <%= label_tag "quote_philosopher_first_name", "Philosopher first name", class: "sr-only" %>
+        <%= text_field_tag "quote[philosopher_first_name]", params.dig(:quote, :philosopher_first_name) || @quote.philosopher&.first_name, required: true, class: "form-field__control", placeholder: "First name" %>
+      </div>
+      <div class="form-field__stack-item">
+        <%= label_tag "quote_philosopher_last_name", "Philosopher last name", class: "sr-only" %>
+        <%= text_field_tag "quote[philosopher_last_name]", params.dig(:quote, :philosopher_last_name) || @quote.philosopher&.last_name, class: "form-field__control", placeholder: "Last name (optional)" %>
+      </div>
+    </div>
+    <p class="form-field__hint">Type the philosopher's name exactly as you want it to appear.</p>
   </div>
 
   <div class="form-field">
+    <%= form.label :philosopher_biography, "Short biography", class: "form-field__label" %>
+    <%= text_area_tag "quote[philosopher_biography]", params.dig(:quote, :philosopher_biography) || @quote.philosopher&.biography, rows: 3, class: "form-field__control", placeholder: "Optional context about the philosopher" %>
+    <p class="form-field__hint">Share a quick note or background to help others learn more. This field is optional.</p>
+  </div>
+
+  <div class="form-field" data-category-selector>
     <%= form.label :category_ids, "Categories", class: "form-field__label" %>
-    <%= form.collection_select :category_ids, @categories, :id, :name, { prompt: false }, { multiple: true, required: true, size: 5, class: "form-field__control" } %>
-    <p class="form-field__hint">Choose at least one theme so others can discover your quote.</p>
+    <div class="category-selector__control">
+      <%= select_tag :category_picker, options_from_collection_for_select(@categories, :id, :name), prompt: "Select a category", class: "form-field__control category-selector__select", data: { category_selector_target: "select" } %>
+      <button type="button" class="button button--subtle button--sm category-selector__add" data-category-selector-add>Add</button>
+    </div>
+    <div class="category-selector__list" data-category-selector-list>
+      <% @quote.categories.each do |category| %>
+        <div class="category-chip" data-category-chip data-category-id="<%= category.id %>">
+          <span class="category-chip__label" data-category-name><%= category.name %></span>
+          <button type="button" class="category-chip__remove" data-category-remove aria-label="Remove <%= category.name %>">&times;</button>
+          <input type="hidden" name="quote[category_ids][]" value="<%= category.id %>" data-category-value>
+        </div>
+      <% end %>
+      <p class="category-selector__empty" data-category-selector-empty <%= @quote.categories.any? ? 'hidden' : '' %>>No categories selected yet.</p>
+    </div>
+    <p class="form-field__hint">Add each category individually. Selected categories stack as cards below.</p>
+
+    <template data-category-selector-template>
+      <div class="category-chip" data-category-chip>
+        <span class="category-chip__label" data-category-name></span>
+        <button type="button" class="category-chip__remove" data-category-remove aria-label="Remove category">&times;</button>
+        <input type="hidden" name="quote[category_ids][]" value="" data-category-value>
+      </div>
+    </template>
   </div>
 
   <div class="form-field">
